@@ -1,11 +1,14 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,4 +23,12 @@ public class Restaurant extends BaseEntity{
     private Integer minOrderAmount;
     private Double deliveryFee;
     private Boolean acceptingOrders;
+
+    @ManyToOne
+    RestaurantOwner restaurantOwner;
+    @OneToMany
+    List<MenuItem> menuItems;
+    @OneToMany
+    private List<ComboMeal> comboMeals;
+
 }
