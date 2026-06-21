@@ -19,6 +19,6 @@ public class OrderItem extends BaseEntity{
     @ManyToOne
     private Order order;
     @ManyToOne
-    private OrderItem orderItem;
+    private MenuItem menuItem;
 
 }

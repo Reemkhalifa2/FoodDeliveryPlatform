@@ -1,9 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +20,7 @@ public class ComboMeal extends BaseEntity{
     @ManyToOne
     private Restaurant restaurant;
 
-    @ManyToMany
-    private List<MenuItem> menuItems;
+    @ManyToOne
+    @JoinColumn(name = "menu_item_id")
+    private MenuItem menuItem;
 }
