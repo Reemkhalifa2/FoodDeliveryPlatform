@@ -1,12 +1,12 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +19,9 @@ public class CorporateOrder extends BaseEntity{
     private Date orderDate;
     private String status;
     private Double totalAmount;
+
+    @ManyToOne
+    private Restaurant restaurant;
+    @OneToMany
+    private List<CorporateOrder> corporateOrders;
 }
