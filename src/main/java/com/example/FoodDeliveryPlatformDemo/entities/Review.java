@@ -1,6 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +20,6 @@ public class Review extends BaseEntity{
     private Customer customer;
     @ManyToOne(optional = true)
     private Restaurant restaurant;
+    @ManyToOne(optional = true)
+    private DeliveryDriver deliveryDriver;
 }
