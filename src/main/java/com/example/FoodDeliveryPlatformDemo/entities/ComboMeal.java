@@ -20,7 +20,6 @@ public class ComboMeal extends BaseEntity{
     @ManyToOne
     private Restaurant restaurant;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_item_id")
-    private MenuItem menuItem;
+    @OneToMany
+    private List<MenuItem> menuItem;
 }
