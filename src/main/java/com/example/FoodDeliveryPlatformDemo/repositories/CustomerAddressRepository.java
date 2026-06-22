@@ -1,0 +1,14 @@
+package com.example.FoodDeliveryPlatformDemo.repositories;
+
+import com.example.FoodDeliveryPlatformDemo.entities.Customer;
+import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface CustomerAddressRepository extends JpaRepository<CustomerAddress , Integer> {
+    @Query("SELECT ca.customer FROM CustomerAddress ca WHERE ca.city = :city AND ca.isActive=true")
+    List<Customer>findByCity(@Param("city") String city);
+}
