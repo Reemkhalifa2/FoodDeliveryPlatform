@@ -1,4 +1,4 @@
-package com.example.FoodDeliveryPlatformDemo.Utilities;
+package com.example.FoodDeliveryPlatformDemo.utilities;
 
 import java.time.LocalDate;
 import java.time.Period;
