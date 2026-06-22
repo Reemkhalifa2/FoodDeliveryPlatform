@@ -10,14 +10,14 @@ import java.util.Date;
 import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
-    @Query("SELECT C FROM CUSTOMER C WHERE C.email=:email AND C.isActive=true")
+    @Query("SELECT C FROM Customer C WHERE C.email=:email AND C.isActive=true")
     Customer findByEmail(@Param("email") String email);
 
-    @Query("SELECT C from CUSTOMER C WHERE C.loyaltyPoints=:loyaltyPoints AND C.isActive=true")
+    @Query("SELECT C from Customer C WHERE C.loyaltyPoints=:loyaltyPoints AND C.isActive=true")
     List<Customer>findByLoyaltyPointsGreaterThanEqual(@Param("loyaltyPoints") Integer loyaltyPoints);
     @Query("SELECT c FROM Customer c WHERE c.createdDate BETWEEN :start AND :end")
     List<Customer> findCustomersByDateRange(
-            @Param("start") Data start,
+            @Param("start") Date start,
             @Param("end") Date end
     );
 }
