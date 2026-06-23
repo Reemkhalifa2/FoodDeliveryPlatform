@@ -2,12 +2,14 @@ package com.example.FoodDeliveryPlatformDemo.dto.request;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.RestaurantOwner;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class RestaurantOwnerRequestDTO extends PersonDTO {
+    @NotBlank
     private String businessLicenseCode;
 
     public static RestaurantOwner toEntity(RestaurantOwnerRequestDTO dto) {
