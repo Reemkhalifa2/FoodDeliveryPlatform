@@ -26,6 +26,7 @@ public class RestaurantRequestDTO {
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "0.8")
     private Double deliveryFee;
+    private RestaurantOwnerRequestDTO restaurantOwnerRequestDTO;
 
     public static Restaurant toEntity(RestaurantRequestDTO dto) {
         Restaurant restaurant = new Restaurant();
@@ -36,6 +37,7 @@ public class RestaurantRequestDTO {
         restaurant.setClosingTime(dto.getClosingTime());
         restaurant.setMinOrderAmount(dto.getMinOrderAmount());
         restaurant.setDeliveryFee(dto.getDeliveryFee());
+        restaurant.setRestaurantOwner(restaurant.getRestaurantOwner());
         return restaurant;
     }
 
