@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CorporateOrder extends BaseEntity{
+public class CorporateOrder extends BaseEntity {
     private String corporateCode;
     private String companyName;
     private Double costCenter;

@@ -18,7 +18,7 @@ public class Customer extends Person{
     private String customerCode;
 
     @OneToMany
-    private List<CustomerAddress> customerAddresses;
+    List<CustomerAddress> customerAddresses;
     @OneToMany
     private List<Order> orders;
     @OneToMany
