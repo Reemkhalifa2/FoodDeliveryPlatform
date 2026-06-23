@@ -28,7 +28,6 @@ public class DeliveryDriverResponseDTO {
         dto.setDriverCode(deliveryDriver.getDriverCode());
         dto.setVehiclePlate(deliveryDriver.getVehiclePlate());
         dto.setVehicleType(deliveryDriver.getVehicleType());
-        dto.setCustomerAddressResponseDTOList(CustomerAddressResponseDTO.toResponse(deliveryDriver.getCustomerAddresses()));
 
         return dto;
     }
