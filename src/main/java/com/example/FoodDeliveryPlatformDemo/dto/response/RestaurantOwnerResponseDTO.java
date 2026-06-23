@@ -1,5 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.dto.response;
 
+import com.example.FoodDeliveryPlatformDemo.dto.summary.RestaurantOwnerSummaryDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.summary.RestaurantSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.RestaurantOwner;
 import lombok.Data;
@@ -15,6 +17,7 @@ public class RestaurantOwnerResponseDTO {
     private String lastName;
     private String email;
     private String phone;
+    private List<RestaurantSummaryDTO> restaurants;
 
     public static RestaurantOwnerResponseDTO toResponse(RestaurantOwner restaurantOwner) {
         RestaurantOwnerResponseDTO dto = new RestaurantOwnerResponseDTO();
@@ -22,6 +25,9 @@ public class RestaurantOwnerResponseDTO {
         dto.setLastName(restaurantOwner.getLastName());
         dto.setEmail(restaurantOwner.getEmail());
         dto.setPhone(restaurantOwner.getPhone());
+        dto.setRestaurants(
+                RestaurantSummaryDTO.toSummary(restaurantOwner.getRestaurants())
+        );
         return dto;
     }
 
