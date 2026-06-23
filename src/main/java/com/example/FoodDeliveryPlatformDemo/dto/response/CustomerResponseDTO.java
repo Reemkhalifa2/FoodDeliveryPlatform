@@ -1,7 +1,9 @@
 package com.example.FoodDeliveryPlatformDemo.dto.response;
 
+import com.example.FoodDeliveryPlatformDemo.dto.summary.CustomerAddressSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import com.example.FoodDeliveryPlatformDemo.entities.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +23,7 @@ public class CustomerResponseDTO {
     private String phone;
     private Integer loyaltyPoints;
     private String customerCode;
-    private List<CustomerAddressResponseDTO> customerAddressResponseDTOList;
-
+    private List<CustomerAddressSummaryDTO> address;
     public static CustomerResponseDTO toResponse(Customer customer) {
         CustomerResponseDTO dto = new CustomerResponseDTO();
         dto.setFirstName(customer.getFirstName());
@@ -31,7 +32,7 @@ public class CustomerResponseDTO {
         dto.setPhone(customer.getPhone());
         dto.setLoyaltyPoints(customer.getLoyaltyPoints());
         dto.setCustomerCode(customer.getCustomerCode());
-        dto.setCustomerAddressResponseDTOList(CustomerAddressResponseDTO.toResponse(customer.getCustomerAddresses()));
+        dto.setAddress(CustomerAddressSummaryDTO.toSummary(customer.getCustomerAddresses()));
 
         return dto;
     }
