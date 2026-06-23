@@ -1,8 +1,12 @@
 package com.example.FoodDeliveryPlatformDemo.dto.summary;
 
 import com.example.FoodDeliveryPlatformDemo.entities.MenuItem;
+import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +21,13 @@ public class MenuItemSummaryDTO {
         dto.setPrice(menuItem.getPrice());
 
         return dto;
+    }
+
+    public static List<MenuItemSummaryDTO> toSummary(List<MenuItem> items) {
+        List<MenuItemSummaryDTO> dtos = new ArrayList<>();
+        for (MenuItem entity : items) {
+            dtos.add(toSummary(entity));
+        }
+        return dtos;
     }
 }
