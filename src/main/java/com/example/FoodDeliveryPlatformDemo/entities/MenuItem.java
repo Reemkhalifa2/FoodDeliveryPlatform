@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuItem extends BaseEntity{
-    private String MenuItem;
+    private String name;
     private String description;
     private Double price;
     private Boolean isAvailable;
