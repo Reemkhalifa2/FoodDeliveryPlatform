@@ -5,8 +5,24 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class HelperUtils {
+    public static UUID generateId(){
+        return UUID.randomUUID();
+    }
+
+    public static String generateId(String prefix){
+        return prefix+UUID.randomUUID();
+    }
+
+    public static String generateId(String prefix, int length){
+        return prefix + UUID.randomUUID().toString().substring(0,length);
+    }
+
+    public static String generateId(String prefix, String suffix){
+        return prefix + UUID.randomUUID() + suffix;
+    }
     public static Boolean isNull(Object obj){
         return obj == null;
     }
