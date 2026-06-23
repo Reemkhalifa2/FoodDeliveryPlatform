@@ -3,6 +3,7 @@ package com.example.FoodDeliveryPlatformDemo.dto.response;
 import com.example.FoodDeliveryPlatformDemo.dto.summary.OrderItemSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderItem;
+import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import lombok.Data;
 
 import java.security.PrivateKey;
@@ -25,18 +26,9 @@ public class OrderResponseDTO {
         dto.setSubtotal(order.getSubtotal());
         dto.setDiscountAmount(order.getDiscountAmount());
         dto.setTotalAmount(order.getTotalAmount());
-
-        if (order.getOrderItems() != null) {
-
-            List<OrderItemSummaryDTO> items = new ArrayList<>();
-
-            for (OrderItem orderItem : order.getOrderItems()) {
-                items.add(OrderItemSummaryDTO.toSummary(orderItem));
-            }
-
-            dto.setOrderItems(items);
+        if (HelperUtils.isNotNull(order.getOrderItems())) {
+            dto.setOrderItems(OrderItemSummaryDTO.toSummary(order.getOrderItems()));
         }
-
         return dto;
     }
 
