@@ -4,6 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.MenuItem;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderItem;
+import com.example.FoodDeliveryPlatformDemo.entities.Payment;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -14,9 +15,15 @@ public class OrderRequestDTO {
     private CustomerRequestDTO customer;
     private RestaurantRequestDTO restaurant;
     private List<OrderItemRequestDTO> orderItems;
+    private PaymentRequestDTO payment;
 
     public static Order toEntity(OrderRequestDTO dto) {
         Order order = new Order();
+        if (dto.getPayment() != null) {
+            order.setPayment(
+                    PaymentRequestDTO.toEntity(dto.getPayment())
+            );
+        }
 
         if (dto.getCustomer() != null) {
             order.setCustomer(
