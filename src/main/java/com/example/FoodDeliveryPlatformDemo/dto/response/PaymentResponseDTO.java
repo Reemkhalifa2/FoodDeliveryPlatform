@@ -13,9 +13,6 @@ public class PaymentResponseDTO {
     private Double amount;
 
     public static PaymentResponseDTO toResponse(Payment payment) {
-        if (payment == null) {
-            return null;
-        }
 
         PaymentResponseDTO dto = new PaymentResponseDTO();
 
@@ -29,11 +26,9 @@ public class PaymentResponseDTO {
     public static List<PaymentResponseDTO> toResponse(List<Payment> payments) {
         List<PaymentResponseDTO> dtos = new ArrayList<>();
 
-        if (payments != null) {
-            for (Payment payment : payments) {
+        for (Payment payment : payments) {
                 dtos.add(toResponse(payment));
             }
-        }
 
         return dtos;
     }
