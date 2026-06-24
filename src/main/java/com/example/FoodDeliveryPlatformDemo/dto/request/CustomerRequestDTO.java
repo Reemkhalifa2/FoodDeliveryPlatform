@@ -14,8 +14,6 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 public class CustomerRequestDTO extends PersonDTO{
-    @Nullable
-    private CustomerAddressRequestDTO customerAddressRequestDTO;
 
     public static Customer toEntity(CustomerRequestDTO dto) {
         Customer customer = new Customer();
@@ -28,13 +26,6 @@ public class CustomerRequestDTO extends PersonDTO{
 
         if (HelperUtils.isNull(customer.getCustomerAddresses())) {
             customer.setCustomerAddresses(new ArrayList<>());
-        }
-
-        if (HelperUtils.isNotNull(dto.getCustomerAddressRequestDTO()) ) {
-            CustomerAddress customerAddress =
-                    CustomerAddressRequestDTO.toEntity(dto.getCustomerAddressRequestDTO());
-
-            customer.getCustomerAddresses().add(customerAddress);
         }
 
         return customer;
