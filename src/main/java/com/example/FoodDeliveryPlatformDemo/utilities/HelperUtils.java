@@ -13,7 +13,7 @@ import java.util.UUID;
 public class HelperUtils {
 
     // Distance in kilometers using Haversine Formula
-    public double calculateDistance(double lat1, double lng1,
+    public static double calculateDistance(double lat1, double lng1,
                                     double lat2, double lng2) {
 
         final int EARTH_RADIUS = 6371;
@@ -34,19 +34,19 @@ public class HelperUtils {
     }
 
     // subtotal + fee
-    public double calculateTotal(double subtotal, double fee) {
+    public static double calculateTotal(double subtotal, double fee) {
         return subtotal + fee;
     }
 
     // subtotal + fee - discount
-    public double calculateTotal(double subtotal,
+    public static double calculateTotal(double subtotal,
                                  double fee,
                                  double discount) {
         return subtotal + fee - discount;
     }
 
     // Default currency format
-    public String formatCurrency(double amount) {
+    public static String formatCurrency(double amount) {
         NumberFormat formatter =
                 NumberFormat.getCurrencyInstance(Locale.US);
 
@@ -54,16 +54,21 @@ public class HelperUtils {
     }
 
     // Currency with specific code
-    public String formatCurrency(double amount,
+    public static String formatCurrency(double amount,
                                  String currencyCode) {
 
         return String.format("%.2f %s",
                 amount,
                 currencyCode.toUpperCase());
     }
+    public static Integer subtract(Integer a , Integer b){{
+        return a  - b;
+    }
+
+    }
 
     // Check if current time is within business hours
-    public boolean isBusinessOpen(String openTime,
+    public static boolean isBusinessOpen(String openTime,
                                   String closeTime) {
 
         LocalTime now = LocalTime.now();
