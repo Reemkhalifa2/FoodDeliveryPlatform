@@ -1,6 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,5 +17,6 @@ public class CustomerAddress extends BaseEntity{
     private String building;
     private Boolean isDefault;
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 }
