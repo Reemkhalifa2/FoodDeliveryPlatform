@@ -67,6 +67,8 @@ public class CustomerService{
         return CustomerResponseDTO.toResponse(customer);
     }
 
+
+
     public CustomerResponseDTO updateLoyaltyPoints(Integer customerId, int points){
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
@@ -74,6 +76,9 @@ public class CustomerService{
         }
         if (points < 0) {
             throw new InvalidLoyaltyPointsException("Points must be positive");
+        }
+        if (points < customer.getLoyaltyPoints()) {
+            throw new InvalidLoyaltyPointsException("Enter new value");
         }
         customer.setLoyaltyPoints(points);
         customerRepository.save(customer);
