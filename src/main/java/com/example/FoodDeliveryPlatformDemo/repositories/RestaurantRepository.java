@@ -1,5 +1,8 @@
 package com.example.FoodDeliveryPlatformDemo.repositories;
 
+import com.example.FoodDeliveryPlatformDemo.entities.ComboMeal;
+import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import com.example.FoodDeliveryPlatformDemo.entities.MenuItem;
 import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,8 +26,19 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     @Query("SELECT r FROM Restaurant r WHERE r.isActive = true AND r.restaurantOwner.id = :ownerId")
     List<Restaurant>findByOwner(@Param("ownerId") Long ownerId);
 
-    @Query("SELECT r FROM Restaurant r WHERE r.name LIKE %:keyword%")
+    @Query("SELECT r FROM Restaurant r WHERE r.isActive = true AND r.name LIKE %:keyword% ")
     List<Restaurant> findByNameContainingIgnoreCase(String keyword);
+
+    @Query("SELECT r FROM Restaurant r WHERE r.isActive = true")
+    List<Restaurant> getAll();
+
+    @Query("SELECT r.menuItems FROM Restaurant r WHERE r.id = :restaurantId")
+    List<MenuItem> findMenuByRestaurantId(@Param("restaurantId") Integer restaurantId);
+
+    @Query("SELECT r.comboMeals FROM Restaurant r WHERE r.id = :restaurantId")
+    List<ComboMeal> findComboMealByRestaurantId(@Param("restaurantId") Integer restaurantId);
+
+
 
 
 
