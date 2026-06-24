@@ -1,6 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
+import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import lombok.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     );
     @Query("SELECT c FROM Customer c WHERE c.isActive=true ")
     List<Customer> findAll();
+
+    @Query("SELECT c.customerAddresses FROM Customer c WHERE c.id = :customerId")
+    List<CustomerAddress> findAddressesByCustomerId(@Param("customerId") Integer customerId);
+
 }
