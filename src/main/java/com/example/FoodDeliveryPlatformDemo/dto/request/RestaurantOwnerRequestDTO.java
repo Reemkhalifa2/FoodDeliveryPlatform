@@ -3,11 +3,13 @@ package com.example.FoodDeliveryPlatformDemo.dto.request;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.RestaurantOwner;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class RestaurantOwnerRequestDTO extends PersonDTO {
     @NotBlank
     private String businessLicenseCode;
