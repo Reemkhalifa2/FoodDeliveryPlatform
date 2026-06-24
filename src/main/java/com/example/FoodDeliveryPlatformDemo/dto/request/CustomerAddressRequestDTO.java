@@ -4,11 +4,13 @@ import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CustomerAddressRequestDTO {
     @NotBlank
     private String street;
