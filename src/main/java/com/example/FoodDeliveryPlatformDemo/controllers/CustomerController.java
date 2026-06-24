@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidRequestException;
@@ -54,6 +55,12 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDTO> applyLoyaltyPenalty(@PathVariable Integer id , @PathVariable Integer points){
         return ResponseEntity.ok(customerService.applyLoyaltyPenalty(id,points));
     }
+
+    @PostMapping("/{id}/addresses")
+    public ResponseEntity<CustomerResponseDTO> addAddress(@PathVariable Integer id ,@RequestBody CustomerAddressRequestDTO customerAddressRequestDTO){
+        return ResponseEntity.ok(customerService.addAddress(id, customerAddressRequestDTO));
+    }
+
 
 
 
