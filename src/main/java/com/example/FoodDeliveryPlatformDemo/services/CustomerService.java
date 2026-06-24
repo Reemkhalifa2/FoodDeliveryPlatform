@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.module.ResolutionException;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,6 +38,7 @@ public class CustomerService{
         Customer customer = CustomerRequestDTO.toEntity(dto);
         customer.setIsActive(true);
         customer.setCustomerCode(HelperUtils.generateId("CUST-",4));
+        customer.setCreatedDate(new Date());
         customerRepository.save(customer);
 
         return CustomerResponseDTO.toResponse(customer);
@@ -54,6 +56,8 @@ public class CustomerService{
         CustomerAddress address = CustomerAddressRequestDTO.toEntity(initialAddress);
         address.setIsActive(true);
         customer.getCustomerAddresses().add(address);
+        customer.setCustomerCode(HelperUtils.generateId("CUST-",4));
+        customer.setCreatedDate(new Date());
         customerAddressRepository.save(address);
 
         customerRepository.save(customer);
@@ -72,6 +76,7 @@ public class CustomerService{
         }
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
         customerAddress.setIsActive(true);
+        customerAddress.setCreatedDate(new Date());
         customer.getCustomerAddresses().add(customerAddress);
         customerAddressRepository.save(customerAddress);
         customerRepository.save(customer);
@@ -91,6 +96,7 @@ public class CustomerService{
         }
 
         customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
+        customer.setUpdatedDate(new Date());
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
@@ -109,6 +115,7 @@ public class CustomerService{
             throw new InvalidLoyaltyPointsException("Not enough points");
         }
         customer.setLoyaltyPoints(HelperUtils.subtract(customer.getLoyaltyPoints(), pointsDeducted));
+        customer.setUpdatedDate(new Date());
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
@@ -161,6 +168,7 @@ public class CustomerService{
             throw new AddressNotFoundException();
         }
         customerAddress.setIsDefault(true);
+        customerAddress.setUpdatedDate(new Date());
         customerAddressRepository.save(customerAddress);
         return CustomerAddressResponseDTO.toResponse(customerAddress);
     }
@@ -171,6 +179,7 @@ public class CustomerService{
             throw new AddressNotFoundException();
         }
         customerAddress.setIsActive(false);
+        customerAddress.setUpdatedDate(new Date());
         customerAddressRepository.save(customerAddress);
         return "Address deleted successfully";
     }
