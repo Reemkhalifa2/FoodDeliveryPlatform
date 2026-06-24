@@ -2,6 +2,7 @@ package com.example.FoodDeliveryPlatformDemo.controllers;
 
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidRequestException;
 import com.example.FoodDeliveryPlatformDemo.services.CustomerService;
@@ -59,6 +60,11 @@ public class CustomerController {
     @PostMapping("/{id}/addresses")
     public ResponseEntity<CustomerResponseDTO> addAddress(@PathVariable Integer id ,@RequestBody CustomerAddressRequestDTO customerAddressRequestDTO){
         return ResponseEntity.ok(customerService.addAddress(id, customerAddressRequestDTO));
+    }
+
+    @GetMapping("/{id}/addresses")
+    public ResponseEntity<List<CustomerAddressResponseDTO>> getAllAddresses(@PathVariable Integer id ){
+        return ResponseEntity.ok(customerService.getAllAddressesByCustomer(id));
     }
 
 
