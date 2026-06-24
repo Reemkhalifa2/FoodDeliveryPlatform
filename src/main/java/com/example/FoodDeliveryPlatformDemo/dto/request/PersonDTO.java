@@ -1,22 +1,24 @@
 package com.example.FoodDeliveryPlatformDemo.dto.request;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class PersonDTO {
     @NotBlank(message = "First name cannot be blank.")
     private String firstName;
     @NotBlank(message = "Last name cannot be blank.")
     private String lastName;
-    @Column(unique = true)
     @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Invalid email")
     private String email;
