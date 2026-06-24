@@ -4,11 +4,14 @@ import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.DeliveryDriver;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DeliveryDriverRequestDTO extends PersonDTO{
     @NotBlank
     private String vehicleType;
