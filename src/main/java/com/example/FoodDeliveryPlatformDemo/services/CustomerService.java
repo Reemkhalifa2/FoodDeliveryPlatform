@@ -118,6 +118,13 @@ public class CustomerService{
     public List<CustomerResponseDTO> getAllCustomers(){
         return CustomerResponseDTO.toResponse(customerRepository.findAll());
     }
+    public CustomerResponseDTO getById(Integer id){
+        Customer customer = customerRepository.findByID(id);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException(id);
+        }
+        return CustomerResponseDTO.toResponse(customer);
+    }
 
 
 
