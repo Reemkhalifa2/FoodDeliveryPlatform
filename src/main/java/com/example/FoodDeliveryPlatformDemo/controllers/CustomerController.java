@@ -83,8 +83,4 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getAllOrdersByCustomer(id));
     }
 
-
-
-
-
 }
