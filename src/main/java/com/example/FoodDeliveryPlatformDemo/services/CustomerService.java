@@ -85,6 +85,23 @@ public class CustomerService{
         return CustomerResponseDTO.toResponse(customer);
     }
 
+    public CustomerResponseDTO applyLoyaltyPenalty(Integer customerId, int pointsDeducted) {
+        Customer customer = customerRepository.findByID(customerId);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException(customerId);
+        }
+        if (pointsDeducted < 0) {
+            throw new InvalidLoyaltyPointsException("Points must be positive");
+        }
+        if (pointsDeducted > customer.getLoyaltyPoints()) {
+            throw new InvalidLoyaltyPointsException("Not enough points");
+        }
+        customer.setLoyaltyPoints(HelperUtils.subtract(customer.getLoyaltyPoints(), pointsDeducted));
+        customerRepository.save(customer);
+        return CustomerResponseDTO.toResponse(customer);
+    }
+
+
 
 
 
