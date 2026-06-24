@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
+import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
@@ -23,8 +24,24 @@ public class CustomerService{
             throw new NullRequestBodyException("Customer request cannot be null.");
         }
         Customer customer = CustomerRequestDTO.toEntity(dto);
+        customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
+    public CustomerResponseDTO createCustomer(CustomerRequestDTO dto, CustomerAddressRequestDTO initialAddress) {
+        if(HelperUtils.isNull(dto)){
+            throw new NullRequestBodyException("Customer request cannot be null.");
+        }
+        if(HelperUtils.isNull(initialAddress)){
+            throw new NullRequestBodyException("Customer address request cannot be null.");
+        }
+        dto.setCustomerAddressRequestDTO(initialAddress);
+
+        Customer customer = CustomerRequestDTO.toEntity(dto);
+        customerRepository.save(customer);
+        return CustomerResponseDTO.toResponse(customer);
+    }
+
+
 
 
 
