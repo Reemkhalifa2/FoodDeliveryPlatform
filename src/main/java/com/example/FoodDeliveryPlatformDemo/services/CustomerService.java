@@ -10,6 +10,7 @@ import com.example.FoodDeliveryPlatformDemo.exceptions.*;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerAddressRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,7 @@ public class CustomerService{
 
         Customer customer = CustomerRequestDTO.toEntity(dto);
         CustomerAddress address = CustomerAddressRequestDTO.toEntity(initialAddress);
+        address.setIsActive(true);
         customer.getCustomerAddresses().add(address);
         customerAddressRepository.save(address);
 
@@ -68,6 +70,7 @@ public class CustomerService{
             throw new CustomerNotFoundException();
         }
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
+        customerAddress.setIsActive(true);
         customer.getCustomerAddresses().add(customerAddress);
         customerAddressRepository.save(customerAddress);
         customerRepository.save(customer);
@@ -149,6 +152,28 @@ public class CustomerService{
             throw new InvalidRequestException("Id is null");
         }
         return CustomerAddressResponseDTO.toResponse(customerRepository.findAddressesByCustomerId(customerId));
+    }
+
+    public CustomerAddressResponseDTO setDefault(Integer addressId){
+        CustomerAddress customerAddress = customerAddressRepository.getById(addressId);
+        if(HelperUtils.isNull(customerAddress)){
+            throw new AddressNotFoundException();
+        }
+        customerAddress.setIsDefault(true);
+        customerAddressRepository.save(customerAddress);
+        return CustomerAddressResponseDTO.toResponse(customerAddress);
+    }
+
+    public String deleteAddress(Integer addressId){
+        CustomerAddress customerAddress = customerAddressRepository.getById(addressId);
+        if(HelperUtils.isNull(customerAddress)){
+            throw new AddressNotFoundException();
+        }
+        customerAddress.setIsActive(false);
+        customerAddressRepository.save(customerAddress);
+        return "Address deleted successfully";
+
+
     }
 
 
