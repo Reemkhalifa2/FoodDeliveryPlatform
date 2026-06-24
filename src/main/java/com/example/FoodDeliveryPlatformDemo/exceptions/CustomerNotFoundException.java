@@ -1,7 +1,9 @@
 package com.example.FoodDeliveryPlatformDemo.exceptions;
 
+import javax.swing.*;
+
 public class CustomerNotFoundException extends RuntimeException{
-    public CustomerNotFoundException(Integer id) {
-        super("Customer not found with id: " + id);
+    public CustomerNotFoundException() {
+        super("Customer not found");
     }
 }
