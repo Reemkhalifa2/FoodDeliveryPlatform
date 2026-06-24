@@ -3,12 +3,16 @@ package com.example.FoodDeliveryPlatformDemo.dto.request;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderItem;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderRequestDTO {
     private CustomerRequestDTO customer;
     private RestaurantRequestDTO restaurant;
