@@ -22,6 +22,7 @@ public class CustomerService{
         this.customerRepository = customerRepository;
         this.customerAddressRepository = customerAddressRepository;
     }
+
     CustomerRepository customerRepository;
     CustomerAddressRepository customerAddressRepository;
 
@@ -31,6 +32,7 @@ public class CustomerService{
         }
         Customer customer = CustomerRequestDTO.toEntity(dto);
         customerRepository.save(customer);
+
         return CustomerResponseDTO.toResponse(customer);
     }
 
@@ -41,13 +43,13 @@ public class CustomerService{
         if(HelperUtils.isNull(initialAddress)){
             throw new NullRequestBodyException("Customer address request cannot be null.");
         }
-        dto.setCustomerAddressRequestDTO(initialAddress);
 
         Customer customer = CustomerRequestDTO.toEntity(dto);
         CustomerAddress address = CustomerAddressRequestDTO.toEntity(initialAddress);
+        customer.getCustomerAddresses().add(address);
+        customerAddressRepository.save(address);
 
         customerRepository.save(customer);
-        customerAddressRepository.save(address);
         return CustomerResponseDTO.toResponse(customer);
     }
 
@@ -61,8 +63,8 @@ public class CustomerService{
         }
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
         customer.getCustomerAddresses().add(customerAddress);
-        customerRepository.save(customer);
         customerAddressRepository.save(customerAddress);
+        customerRepository.save(customer);
 
         return CustomerResponseDTO.toResponse(customer);
     }
