@@ -8,6 +8,7 @@ import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import com.example.FoodDeliveryPlatformDemo.exceptions.CustomerNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidLoyaltyPointsException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
+import com.example.FoodDeliveryPlatformDemo.repositories.CustomerAddressRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Service;
 public class CustomerService{
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, CustomerAddressRepository customerAddressRepository) {
         this.customerRepository = customerRepository;
+        this.customerAddressRepository = customerAddressRepository;
     }
     CustomerRepository customerRepository;
+    CustomerAddressRepository customerAddressRepository;
 
     public CustomerResponseDTO createCustomer(CustomerRequestDTO dto){
         if(HelperUtils.isNull(dto)){
@@ -41,7 +44,10 @@ public class CustomerService{
         dto.setCustomerAddressRequestDTO(initialAddress);
 
         Customer customer = CustomerRequestDTO.toEntity(dto);
+        CustomerAddress address = CustomerAddressRequestDTO.toEntity(initialAddress);
+
         customerRepository.save(customer);
+        customerAddressRepository.save(address);
         return CustomerResponseDTO.toResponse(customer);
     }
 
@@ -56,6 +62,8 @@ public class CustomerService{
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
         customer.getCustomerAddresses().add(customerAddress);
         customerRepository.save(customer);
+        customerAddressRepository.save(customerAddress);
+
         return CustomerResponseDTO.toResponse(customer);
     }
 
