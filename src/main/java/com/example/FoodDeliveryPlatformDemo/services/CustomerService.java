@@ -14,6 +14,8 @@ import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService{
 
@@ -31,6 +33,7 @@ public class CustomerService{
             throw new NullRequestBodyException("Customer request cannot be null.");
         }
         Customer customer = CustomerRequestDTO.toEntity(dto);
+        customer.setIsActive(true);
         customerRepository.save(customer);
 
         return CustomerResponseDTO.toResponse(customer);
@@ -110,6 +113,10 @@ public class CustomerService{
         }
         customer.setIsActive(false);
         return "Customer deactivated successfully";
+    }
+
+    public List<CustomerResponseDTO> getAllCustomers(){
+        return CustomerResponseDTO.toResponse(customerRepository.findAll());
     }
 
 
