@@ -2,6 +2,7 @@ package com.example.FoodDeliveryPlatformDemo.services;
 
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
@@ -143,18 +144,12 @@ public class CustomerService{
         return CustomerResponseDTO.toResponse(customer);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public List<CustomerAddressResponseDTO> getAllAddressesByCustomer(Integer customerId) {
+        if(HelperUtils.isNull(customerId)){
+            throw new InvalidRequestException("Id is null");
+        }
+        return CustomerAddressResponseDTO.toResponse(customerRepository.findAddressesByCustomerId(customerId));
+    }
 
 
 
