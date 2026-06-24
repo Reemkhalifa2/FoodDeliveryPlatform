@@ -2,6 +2,7 @@ package com.example.FoodDeliveryPlatformDemo.dto.response;
 
 import com.example.FoodDeliveryPlatformDemo.dto.summary.MenuItemSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
+import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +32,10 @@ public class RestaurantResponseDTO {
         dto.setClosingTime(restaurant.getClosingTime());
         dto.setMinOrderAmount(restaurant.getMinOrderAmount());
         dto.setDeliveryFee(restaurant.getDeliveryFee());
-        dto.setMenuItems(MenuItemSummaryDTO.toSummary(restaurant.getMenuItems()));
+        if(HelperUtils.isNotNull(restaurant.getMenuItems())){
+            dto.setMenuItems(MenuItemSummaryDTO.toSummary(restaurant.getMenuItems()));
+
+        }
         return dto;
     }
 
