@@ -33,6 +33,7 @@ public class CustomerService{
         }
         Customer customer = CustomerRequestDTO.toEntity(dto);
         customer.setIsActive(true);
+        customer.setCustomerCode(HelperUtils.generateId("CUST-",4));
         customerRepository.save(customer);
 
         return CustomerResponseDTO.toResponse(customer);
@@ -56,9 +57,11 @@ public class CustomerService{
     }
 
     public CustomerResponseDTO addAddress(Integer customerId, CustomerAddressRequestDTO address){
+
         if(HelperUtils.isNull(address)){
             throw new NullRequestBodyException("address request body is null");
         }
+
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
