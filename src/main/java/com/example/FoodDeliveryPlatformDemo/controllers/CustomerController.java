@@ -4,6 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDT
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.response.OrderResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidRequestException;
 import com.example.FoodDeliveryPlatformDemo.services.CustomerService;
 import jakarta.validation.Valid;
@@ -75,6 +76,11 @@ public class CustomerController {
     @DeleteMapping("/addresses/{addressId}")
     public ResponseEntity<String> deleteAddress(@PathVariable Integer addressId){
         return ResponseEntity.ok(customerService.deleteAddress(addressId));
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders(@PathVariable Integer id ){
+        return ResponseEntity.ok(customerService.getAllOrdersByCustomer(id));
     }
 
 
