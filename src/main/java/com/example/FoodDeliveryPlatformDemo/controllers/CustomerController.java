@@ -50,9 +50,12 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.updateLoyaltyPoints(id,points));
     }
 
-    @PutMapping("/{id}/loyalty/deduct/{points} ")
+    @PutMapping("/{id}/loyalty/deduct/{points}")
     public ResponseEntity<CustomerResponseDTO> applyLoyaltyPenalty(@PathVariable Integer id , @PathVariable Integer points){
         return ResponseEntity.ok(customerService.applyLoyaltyPenalty(id,points));
     }
+
+
+
 
 }

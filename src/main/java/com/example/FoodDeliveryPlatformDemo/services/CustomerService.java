@@ -85,7 +85,7 @@ public class CustomerService{
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
 
-        customer.setLoyaltyPoints(points);
+        customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
@@ -95,10 +95,12 @@ public class CustomerService{
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
+
         if (pointsDeducted < 0) {
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
-        if (pointsDeducted > customer.getLoyaltyPoints()) {
+
+        if (HelperUtils.isNotNull(customer.getLoyaltyPoints()) && pointsDeducted > customer.getLoyaltyPoints()) {
             throw new InvalidLoyaltyPointsException("Not enough points");
         }
         customer.setLoyaltyPoints(HelperUtils.subtract(customer.getLoyaltyPoints(), pointsDeducted));
