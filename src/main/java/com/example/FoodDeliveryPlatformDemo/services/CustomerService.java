@@ -4,6 +4,8 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDT
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
+import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import com.example.FoodDeliveryPlatformDemo.exceptions.CustomerNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
@@ -27,6 +29,7 @@ public class CustomerService{
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
+
     public CustomerResponseDTO createCustomer(CustomerRequestDTO dto, CustomerAddressRequestDTO initialAddress) {
         if(HelperUtils.isNull(dto)){
             throw new NullRequestBodyException("Customer request cannot be null.");
@@ -40,6 +43,25 @@ public class CustomerService{
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
     }
+
+    public CustomerResponseDTO addAddress(Integer customerId, CustomerAddressRequestDTO address){
+        if(HelperUtils.isNull(address)){
+            throw new NullRequestBodyException("address request body is null");
+        }
+        Customer customer = customerRepository.findByID(customerId);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException(customerId);
+        }
+        CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
+        customer.getCustomerAddresses().add(customerAddress);
+        customerRepository.save(customer);
+        return CustomerResponseDTO.toResponse(customer);
+
+    }
+
+
+
+
 
 
 
