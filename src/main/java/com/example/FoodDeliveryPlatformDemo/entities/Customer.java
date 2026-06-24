@@ -1,8 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,8 +21,5 @@ public class Customer extends Person{
     private List<Order> orders;
     @OneToMany
     private List<Review> reviews;
-
-    @ManyToOne
-    private Customer customer;
 
 }
