@@ -2,6 +2,7 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import lombok.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,5 +29,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query("SELECT c.customerAddresses FROM Customer c WHERE c.id = :customerId")
     List<CustomerAddress> findAddressesByCustomerId(@Param("customerId") Integer customerId);
+    @Query("SELECT c.orders FROM Customer c WHERE c.id = :customerId")
+    List<Order> findOrdersByCustomerId(@Param("customerId") Integer customerId);
 
 }
