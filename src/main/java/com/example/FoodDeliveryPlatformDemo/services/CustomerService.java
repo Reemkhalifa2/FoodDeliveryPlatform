@@ -5,15 +5,14 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
-import com.example.FoodDeliveryPlatformDemo.exceptions.CustomerNotFoundException;
-import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidLoyaltyPointsException;
-import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
+import com.example.FoodDeliveryPlatformDemo.exceptions.*;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerAddressRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
 
 @Service
@@ -62,7 +61,7 @@ public class CustomerService{
         }
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
-            throw new CustomerNotFoundException(customerId);
+            throw new CustomerNotFoundException();
         }
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
         customer.getCustomerAddresses().add(customerAddress);
@@ -77,14 +76,12 @@ public class CustomerService{
     public CustomerResponseDTO updateLoyaltyPoints(Integer customerId, int points){
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
-            throw new CustomerNotFoundException(customerId);
+            throw new CustomerNotFoundException();
         }
         if (points < 0) {
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
-        if (points < customer.getLoyaltyPoints()) {
-            throw new InvalidLoyaltyPointsException("Enter new value");
-        }
+
         customer.setLoyaltyPoints(points);
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
@@ -93,7 +90,7 @@ public class CustomerService{
     public CustomerResponseDTO applyLoyaltyPenalty(Integer customerId, int pointsDeducted) {
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
-            throw new CustomerNotFoundException(customerId);
+            throw new CustomerNotFoundException();
         }
         if (pointsDeducted < 0) {
             throw new InvalidLoyaltyPointsException("Points must be positive");
@@ -109,9 +106,10 @@ public class CustomerService{
     public String deactivateCustomer(Integer customerId){
         Customer customer = customerRepository.findByID(customerId);
         if(HelperUtils.isNull(customer)){
-            throw new CustomerNotFoundException(customerId);
+            throw new CustomerNotFoundException();
         }
         customer.setIsActive(false);
+        customerRepository.save(customer);
         return "Customer deactivated successfully";
     }
 
@@ -119,12 +117,27 @@ public class CustomerService{
         return CustomerResponseDTO.toResponse(customerRepository.findAll());
     }
     public CustomerResponseDTO getById(Integer id){
+        if(HelperUtils.isNull(id)){
+            throw new InvalidRequestException("Id is null");
+        }
         Customer customer = customerRepository.findByID(id);
         if(HelperUtils.isNull(customer)){
-            throw new CustomerNotFoundException(id);
+            throw new CustomerNotFoundException();
         }
         return CustomerResponseDTO.toResponse(customer);
     }
+
+    public CustomerResponseDTO getByEmail(String email){
+        if(HelperUtils.isNull(email)){
+            throw new InvalidRequestException("email is null");
+        }
+        Customer customer = customerRepository.findByEmail(email);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException();
+        }
+        return CustomerResponseDTO.toResponse(customer);
+    }
+
 
 
 
