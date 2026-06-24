@@ -23,6 +23,7 @@ public class Order extends BaseEntity{
     private String deliveryNotes;
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
     @ManyToOne
     private Restaurant restaurant;
