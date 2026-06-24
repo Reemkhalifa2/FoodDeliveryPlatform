@@ -4,6 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDT
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.response.OrderResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import com.example.FoodDeliveryPlatformDemo.exceptions.*;
@@ -172,8 +173,13 @@ public class CustomerService{
         customerAddress.setIsActive(false);
         customerAddressRepository.save(customerAddress);
         return "Address deleted successfully";
+    }
 
-
+    public List<OrderResponseDTO> getAllOrdersByCustomer(Integer customerId) {
+        if(HelperUtils.isNull(customerId)){
+            throw new InvalidRequestException("Id is null");
+        }
+        return OrderResponseDTO.toResponse(customerRepository.findOrdersByCustomerId(customerId));
     }
 
 
