@@ -6,6 +6,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import com.example.FoodDeliveryPlatformDemo.exceptions.CustomerNotFoundException;
+import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidLoyaltyPointsException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
@@ -56,8 +57,22 @@ public class CustomerService{
         customer.getCustomerAddresses().add(customerAddress);
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
-
     }
+
+    public CustomerResponseDTO updateLoyaltyPoints(Integer customerId, int points){
+        Customer customer = customerRepository.findByID(customerId);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException(customerId);
+        }
+        if (points < 0) {
+            throw new InvalidLoyaltyPointsException("Points must be positive");
+        }
+        customer.setLoyaltyPoints(points);
+        customerRepository.save(customer);
+        return CustomerResponseDTO.toResponse(customer);
+    }
+
+
 
 
 
