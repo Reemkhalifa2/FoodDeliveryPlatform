@@ -101,6 +101,19 @@ public class CustomerService{
         return CustomerResponseDTO.toResponse(customer);
     }
 
+    public String deactivateCustomer(Integer customerId){
+        Customer customer = customerRepository.findByID(customerId);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException(customerId);
+        }
+        customer.setIsActive(false);
+        return "Customer deactivated successfully";
+    }
+
+
+
+
+
 
 
 
