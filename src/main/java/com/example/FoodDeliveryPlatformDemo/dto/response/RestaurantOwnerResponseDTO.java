@@ -4,6 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.summary.RestaurantOwnerSummaryDT
 import com.example.FoodDeliveryPlatformDemo.dto.summary.RestaurantSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.RestaurantOwner;
+import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,9 +26,11 @@ public class RestaurantOwnerResponseDTO {
         dto.setLastName(restaurantOwner.getLastName());
         dto.setEmail(restaurantOwner.getEmail());
         dto.setPhone(restaurantOwner.getPhone());
-        dto.setRestaurants(
-                RestaurantSummaryDTO.toSummary(restaurantOwner.getRestaurants())
-        );
+        if(HelperUtils.isNotNull(restaurantOwner.getRestaurants())){
+            dto.setRestaurants(
+                    RestaurantSummaryDTO.toSummary(restaurantOwner.getRestaurants())
+            );
+        }
         return dto;
     }
 
