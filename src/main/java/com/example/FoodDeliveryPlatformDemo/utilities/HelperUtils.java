@@ -1,13 +1,78 @@
 package com.example.FoodDeliveryPlatformDemo.utilities;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class HelperUtils {
+
+    // Distance in kilometers using Haversine Formula
+    public double calculateDistance(double lat1, double lng1,
+                                    double lat2, double lng2) {
+
+        final int EARTH_RADIUS = 6371;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lngDistance = Math.toRadians(lng2 - lng1);
+
+        double a =
+                Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                        + Math.cos(Math.toRadians(lat1))
+                        * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(lngDistance / 2)
+                        * Math.sin(lngDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
+    }
+
+    // subtotal + fee
+    public double calculateTotal(double subtotal, double fee) {
+        return subtotal + fee;
+    }
+
+    // subtotal + fee - discount
+    public double calculateTotal(double subtotal,
+                                 double fee,
+                                 double discount) {
+        return subtotal + fee - discount;
+    }
+
+    // Default currency format
+    public String formatCurrency(double amount) {
+        NumberFormat formatter =
+                NumberFormat.getCurrencyInstance(Locale.US);
+
+        return formatter.format(amount);
+    }
+
+    // Currency with specific code
+    public String formatCurrency(double amount,
+                                 String currencyCode) {
+
+        return String.format("%.2f %s",
+                amount,
+                currencyCode.toUpperCase());
+    }
+
+    // Check if current time is within business hours
+    public boolean isBusinessOpen(String openTime,
+                                  String closeTime) {
+
+        LocalTime now = LocalTime.now();
+
+        LocalTime open = LocalTime.parse(openTime);
+        LocalTime close = LocalTime.parse(closeTime);
+
+        return !now.isBefore(open) && !now.isAfter(close);
+    }
     public static UUID generateId(){
         return UUID.randomUUID();
     }
