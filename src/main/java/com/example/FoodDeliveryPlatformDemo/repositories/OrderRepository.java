@@ -1,6 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
+import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
 import jdk.dynalink.linker.LinkerServices;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +16,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.customer.id = :customerId")
     List<Order> findByCustomerId(@Param("customerId") Integer customerId);
 
-    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId and o.status = status")
-    List<Order> findByRestaurantIdAndStatus(@Param("restaurantId") Integer restaurantId, String status);
+    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId and o.status = PENDING")
+    List<Order> findByRestaurantIdAndStatus(@Param("restaurantId") Integer restaurantId);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND  o.createdDate BETWEEN :start AND :end")
     List<Order>findByOrderDateBetween(@Param("start") Date start, @Param("end") Date end);
