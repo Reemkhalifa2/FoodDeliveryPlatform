@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
+    @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.id=:id")
+    MenuItem getById(@Param("id") Integer id);
 
     @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.restaurant.id=:id")
     MenuItem findByRestaurantId(@Param("id") Integer id);
