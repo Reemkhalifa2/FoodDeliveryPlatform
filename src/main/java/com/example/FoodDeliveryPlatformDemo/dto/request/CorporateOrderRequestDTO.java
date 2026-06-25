@@ -24,14 +24,15 @@ public class CorporateOrderRequestDTO {
     public static CorporateOrder toEntity(CorporateOrderRequestDTO dto) {
         CorporateOrder corporateOrder = new CorporateOrder();
         corporateOrder.setCompanyName(dto.getCompanyName());
-        List<OrderItem> items = new ArrayList<>();
-        if (HelperUtils.isNotNull(dto.getItems()) ) {
-            for (OrderItemRequestDTO itemDto : dto.getItems()) {
-                items.add(OrderItemRequestDTO.toEntity(itemDto));
-            }
-        }
+        if (HelperUtils.isNotNull(dto.getItems())) {
+            List<OrderItem> orderItems = new ArrayList<>();
 
-        corporateOrder.setItems(items);
+            for (OrderItemRequestDTO itemDto : dto.getItems()) {
+                OrderItem item = OrderItemRequestDTO.toEntity(itemDto);
+                orderItems.add(item);
+            }
+            corporateOrder.setItems(orderItems);
+        }
         return corporateOrder;
 
     }
