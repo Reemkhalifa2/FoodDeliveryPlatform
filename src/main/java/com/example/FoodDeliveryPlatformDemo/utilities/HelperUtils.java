@@ -11,6 +11,9 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class HelperUtils {
+    public static Double deductedAmount(Double price , Integer quantity) {
+        return price * quantity;
+    }
 
     // Distance in kilometers using Haversine Formula
     public static double calculateDistance(double lat1, double lng1,
