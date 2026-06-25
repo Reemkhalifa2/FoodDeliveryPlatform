@@ -16,19 +16,16 @@ public class OrderItemRequestDTO {
     private Integer quantity;
     private String specialInstructions;
     @NotNull
-    private MenuItemRequestDTO menuItemRequestDTO;
+    private Integer menuItemId;
 
     public static OrderItem toEntity(OrderItemRequestDTO dto) {
-        OrderItem orderItem = new OrderItem();
 
+        OrderItem orderItem = new OrderItem();
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(dto.getMenuItemId());
+        orderItem.setMenuItem(menuItem);
         orderItem.setQuantity(dto.getQuantity());
         orderItem.setSpecialInstructions(dto.getSpecialInstructions());
-
-        if (dto.getMenuItemRequestDTO() != null) {
-            orderItem.setMenuItem(
-                    MenuItemRequestDTO.toEntity(dto.getMenuItemRequestDTO())
-            );
-        }
 
         return orderItem;
     }
