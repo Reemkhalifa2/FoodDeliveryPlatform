@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
+import com.example.FoodDeliveryPlatformDemo.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,8 @@ import java.util.List;
 public class Order extends BaseEntity{
     private String orderCode;
     private Date orderDate;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private Double subtotal;
     private Double deliveryFee;
     private Double discountAmount;
