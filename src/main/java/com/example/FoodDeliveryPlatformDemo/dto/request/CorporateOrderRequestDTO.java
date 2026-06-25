@@ -4,6 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.entities.CorporateOrder;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderItem;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CorporateOrderRequestDTO {
+
     @NotBlank
     private String companyName;
     private List<OrderItemRequestDTO> items;
