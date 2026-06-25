@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.request.ComboMealRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.MenuItemRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.RestaurantOwnerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.RestaurantRequestDTO;
@@ -46,18 +47,34 @@ public class RestaurantController {
     }
 
     @GetMapping("/cuisine/{cuisine}")
-    public ResponseEntity<List<RestaurantResponseDTO>> getByCuisine(@PathVariable String cuisine){
-        return ResponseEntity.ok(restaurantService.getByCuisine(cuisine));
+    public ResponseEntity<List<RestaurantResponseDTO>> getRestaurantsByCuisine(@PathVariable String cuisine){
+        return ResponseEntity.ok(restaurantService.getRestaurantsByCuisine(cuisine));
+    }
+
+    @GetMapping("/delivery-fee/under/{maxFee}")
+    public ResponseEntity<List<RestaurantResponseDTO>> getRestaurantsUnderDeliveryFee(
+            @PathVariable Double maxFee) {
+
+        return ResponseEntity.ok(restaurantService.getRestaurantsUnderDeliveryFee(maxFee));
     }
 
     @PutMapping("{id}/toggle-orders")
-    public ResponseEntity<RestaurantResponseDTO> acceptOrder(@PathVariable Integer id , @RequestParam Boolean accepting ){
-        return ResponseEntity.ok(restaurantService.acceptOrder(id , accepting));
+    public ResponseEntity<RestaurantResponseDTO> toggleAcceptingOrders(@PathVariable Integer id , @RequestParam Boolean status ){
+        return ResponseEntity.ok(restaurantService.toggleAcceptingOrders(id , status));
+    }
+    @PutMapping("/{id}/fee/{newFee}")
+    public ResponseEntity<RestaurantResponseDTO> updateDeliveryFee(
+            @PathVariable Integer id,
+            @PathVariable Double newFee) {
+
+        return ResponseEntity.ok(
+                restaurantService.updateDeliveryFee(id, newFee)
+        );
     }
 
     @GetMapping("/{id}/menu")
-    public ResponseEntity<List<MenuItemResponseDTO>> getAllMenuItems(@PathVariable Integer id ){
-        return ResponseEntity.ok(restaurantService.getAllMenuItems(id));
+    public ResponseEntity<List<MenuItemResponseDTO>> getMenuForRestaurant(@PathVariable Integer id ){
+        return ResponseEntity.ok(restaurantService.getMenuForRestaurant(id));
     }
 
     @GetMapping("/{id}/combos")
@@ -68,6 +85,29 @@ public class RestaurantController {
     @PostMapping("/{id}/menu")
     public ResponseEntity<MenuItemResponseDTO> addMenuItem(@PathVariable Integer id , @Valid @RequestBody MenuItemRequestDTO dto){
         return ResponseEntity.ok(restaurantService.addMenuItem(id, dto));
+    }
+
+    @PutMapping("/menu/{itemId}/available")
+    public ResponseEntity<MenuItemResponseDTO> updateAvailability(
+            @PathVariable Integer itemId,
+            @RequestParam Boolean status) {
+
+        return ResponseEntity.ok(restaurantService.updateAvailability(itemId, status));
+    }
+
+    @PostMapping("/{id}/combos")
+    public ResponseEntity<ComboMealResponseDTO> addComboMeal(
+            @PathVariable Integer id,
+            @Valid@RequestBody ComboMealRequestDTO dto) {
+        return ResponseEntity.ok(restaurantService.addComboMeal(id, dto));
+    }
+
+    @PutMapping("/{id}/bulk-price-increase")
+    public ResponseEntity<List<MenuItemResponseDTO>> bulkUpdateMenuItemPrices(
+            @PathVariable Integer id,
+            @RequestParam Double percentage) {
+
+        return ResponseEntity.ok(restaurantService.bulkUpdateMenuItemPrices(id, percentage));
     }
 
 
