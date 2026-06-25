@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.dto.response;
 
+import com.example.FoodDeliveryPlatformDemo.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.summary.OrderItemSummaryDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderItem;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Data
 public class OrderResponseDTO {
-    private String status;
+    private OrderStatus status;
     private Double deliveryFee;
     private Double subtotal;
     private Double discountAmount;
