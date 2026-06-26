@@ -40,7 +40,7 @@ public class DriverController {
 
     @PutMapping("/{id}/status")
     public ResponseEntity<DeliveryDriverResponseDTO> toggleOnlineStatus(@PathVariable Integer id , @RequestParam Boolean status){
-        return ResponseEntity.ok(deliveryService.toggleOnlineStatus(id ,status));
+        return ResponseEntity.ok(deliveryService.toggleDriverOnlineStatus(id ,status));
     }
 
     @PutMapping("/{id}/location")

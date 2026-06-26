@@ -191,12 +191,30 @@ public class DeliveryService {
 
     public List<DeliveryResponseDTO> getDeliveriesForDriver(Integer driverId, String status) {
 
-        List<Delivery> deliveries = deliveryRepository.getDeliveriesForDriver(driverId , status);
+        List<Delivery> deliveries = deliveryRepository.getDeliveries(driverId , status);
 
         if(HelperUtils.isNull(deliveries)) {
             throw new ObjectNotFoundException("Delivery not found");
         }
         return DeliveryResponseDTO.toResponse(deliveries);
+    }
+
+    public List<DeliveryResponseDTO> getDeliveries(String status) {
+
+        List<Delivery> deliveries = deliveryRepository.getDeliveries(status);
+
+        if(HelperUtils.isNull(deliveries)) {
+            throw new ObjectNotFoundException("Delivery not found");
+        }
+        return DeliveryResponseDTO.toResponse(deliveries);
+    }
+
+    public DeliveryResponseDTO getById(Integer id){
+        Delivery delivery = deliveryRepository.getByID(id);
+        if(HelperUtils.isNull(delivery)){
+            throw new ObjectNotFoundException("Delivery not found.");
+        }
+        return DeliveryResponseDTO.toResponse(delivery);
     }
 
 
