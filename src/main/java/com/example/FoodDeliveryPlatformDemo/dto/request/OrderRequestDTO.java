@@ -28,7 +28,6 @@ public class OrderRequestDTO {
         order.getCustomer().setId(dto.getCustomerId());
         order.getRestaurant().setId(dto.getRestaurantId());
 
-
         if (HelperUtils.isNotNull(dto.getItems())) {
             List<OrderItem> orderItems = new ArrayList<>();
 

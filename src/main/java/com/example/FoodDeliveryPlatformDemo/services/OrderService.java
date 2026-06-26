@@ -1,6 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
-import com.example.FoodDeliveryPlatformDemo.OrderStatus;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.OrderItemRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CorporateOrderResponseDTO;

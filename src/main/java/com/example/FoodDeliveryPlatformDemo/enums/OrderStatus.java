@@ -1,4 +1,4 @@
-package com.example.FoodDeliveryPlatformDemo;
+package com.example.FoodDeliveryPlatformDemo.enums;
 
 public enum OrderStatus {
     CREATED,

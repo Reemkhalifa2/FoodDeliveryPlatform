@@ -1,12 +1,11 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
-import com.example.FoodDeliveryPlatformDemo.OrderStatus;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.OrderItemRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CorporateOrderResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.OrderResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.services.OrderService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
