@@ -1,6 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
-import com.example.FoodDeliveryPlatformDemo.OrderStatus;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
