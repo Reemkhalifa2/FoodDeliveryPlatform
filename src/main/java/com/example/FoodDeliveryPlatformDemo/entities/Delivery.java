@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 public class Delivery extends BaseEntity{
-    private Integer trackingCode;
+    private String trackingCode;
     private String status;
     private Date assignedAt;
     private Date pickedUpAt;
