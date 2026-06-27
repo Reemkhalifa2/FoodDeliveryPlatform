@@ -5,9 +5,14 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.OrderResponseDTO;
+import com.example.FoodDeliveryPlatformDemo.entities.Customer;
+import com.example.FoodDeliveryPlatformDemo.entities.Order;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.services.CustomerService;
+import com.example.FoodDeliveryPlatformDemo.services.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +22,33 @@ import java.util.List;
 @RequestMapping("customer")
 public class CustomerController {
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService,
+                              OrderService orderService) {
         this.customerService = customerService;
+        this.orderService = orderService;
     }
 
     CustomerService customerService;
+    OrderService orderService;
+    @GetMapping("/{id}/orders/page")
+    public ResponseEntity<Page<Order>> getOrderHistory(
+            @PathVariable String id,
+            @RequestParam OrderStatus status,
+            @RequestParam String from,
+            @RequestParam String to,
+            @RequestParam Integer page,
+            @RequestParam Integer size) {
+        Page<Order> response = orderService.getOrders(id, status, from, to, page, size);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/search")
+    public Page<Customer> search(
+            @RequestParam String name,
+            @RequestParam Integer page,
+            @RequestParam Integer size) {
+
+        return customerService.search(name, page, size);
+    }
 
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {

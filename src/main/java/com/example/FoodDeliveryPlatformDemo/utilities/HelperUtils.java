@@ -1,16 +1,62 @@
 package com.example.FoodDeliveryPlatformDemo.utilities;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 public class HelperUtils {
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    // Parse String → Date
+    public static Date parse(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return null;
+        try {
+            return FORMAT.parse(dateStr);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Use yyyy-MM-dd. Got: " + dateStr);
+        }
+    }
+
+    // Format Date → String
+    public static String format(Date date) {
+        if (date == null) return null;
+        return FORMAT.format(date);
+    }
+
+    // Set time to start of day  00:00:00
+    public static Date startOfDay(Date date) {
+        if (date == null) return null;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE,      0);
+        cal.set(Calendar.SECOND,      0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    // Set time to end of day  23:59:59
+    public static Date endOfDay(Date date) {
+        if (date == null) return null;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE,      59);
+        cal.set(Calendar.SECOND,      59);
+        cal.set(Calendar.MILLISECOND, 999);
+        return cal.getTime();
+    }
+
+    // Check from is before to
+    public static boolean isValidRange(Date from, Date to) {
+        if (from == null || to == null) return true;
+        return from.before(to);
+    }
     public static Double deductedAmount(Double price , Integer quantity) {
         return price * quantity;
     }

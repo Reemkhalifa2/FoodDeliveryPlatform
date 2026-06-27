@@ -10,6 +10,9 @@ import com.example.FoodDeliveryPlatformDemo.exceptions.*;
 import com.example.FoodDeliveryPlatformDemo.repositories.*;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -39,6 +42,21 @@ public class OrderService {
     MenuItemRepository menuItemRepository;
     OrderItemRepository orderItemRepository;
     CorporateOrderRepository corporateOrderRepository;
+
+    public Page<Order> getOrders(String id, OrderStatus status,
+                                 String from, String to,
+                                 int page, int size) {
+
+        Date fromDate = HelperUtils.startOfDay(HelperUtils.parse(from));
+        Date toDate   = HelperUtils.endOfDay(HelperUtils.parse(to));
+        if (!HelperUtils.isValidRange(fromDate, toDate)) {
+            throw new IllegalArgumentException("'from' date must be before 'to' date");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return orderRepository.findByFilters(id, status, fromDate, toDate, pageable) ;
+    }
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId) {
         Customer customer = customerRepository.findByID(customerId);

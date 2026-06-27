@@ -2,12 +2,16 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import jdk.dynalink.linker.LinkerServices;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 @Repository
@@ -36,6 +40,20 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.id=:id")
     Order getById(@Param("id") Integer id);
+
+    @Query("""
+        SELECT o FROM Order o
+        WHERE o.customer.Id = :id
+          AND o.status = :status
+          AND  o.createdDate BETWEEN :fromDate AND :toDate
+    """)
+    Page<Order> findByFilters(
+            @Param("id")       String    id,
+            @Param("status") OrderStatus status,
+            @Param("fromDate") Date fromDate,
+            @Param("toDate")   Date toDate,
+            Pageable pageable
+    );
 
 
 

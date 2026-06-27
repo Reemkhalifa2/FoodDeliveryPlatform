@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
+import com.example.FoodDeliveryPlatformDemo.dto.patch.CustomerPatchDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
@@ -13,6 +14,9 @@ import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.module.ResolutionException;
@@ -30,6 +34,54 @@ public class CustomerService{
 
     CustomerRepository customerRepository;
     CustomerAddressRepository customerAddressRepository;
+
+
+    public CustomerResponseDTO patchCustomer(Integer id, CustomerPatchDTO dto) {
+
+        Customer customer = customerRepository.findByID(id);
+        if(HelperUtils.isNull(customer)){
+            throw new CustomerNotFoundException();
+        }
+
+        if (dto.getPhone() != null) {
+            if(dto.getPhone().equalsIgnoreCase(customer.getPhone())){
+                throw new InvalidRequestException("New Value can not be as previous value");
+            }
+            customer.setPhone(dto.getPhone());
+        }
+
+        if (dto.getEmail() != null) {
+            if(dto.getEmail().equalsIgnoreCase(customer.getEmail())){
+                throw new InvalidRequestException("New Value can not be as previous value");
+            }
+            customer.setEmail(dto.getEmail());
+        }
+
+        if (dto.getCustomerAddress() != null) {
+            customer.getCustomerAddresses().add(CustomerAddressRequestDTO.toEntity(dto.getCustomerAddress()));
+        }
+
+        if (dto.getFirstName() != null) {
+            if(dto.getFirstName().equalsIgnoreCase(customer.getFirstName())){
+                throw new InvalidRequestException("New Value can not be as previous value");
+            }
+            customer.setFirstName(dto.getFirstName());
+        }
+
+        if (dto.getLastName() != null) {
+            if(dto.getLastName().equalsIgnoreCase(customer.getLastName())){
+                throw new InvalidRequestException("New Value can not be as previous value");
+            }
+            customer.setLastName(dto.getLastName());
+        }
+
+        return CustomerResponseDTO.toResponse(customerRepository.save(customer)) ;
+    }
+
+    public Page<Customer> search(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return customerRepository.search(name, pageable);
+    }
 
     public CustomerResponseDTO createCustomer(CustomerRequestDTO dto){
         if(HelperUtils.isNull(dto)){
@@ -198,6 +250,7 @@ public class CustomerService{
 
         return CustomerResponseDTO.toResponse(customers);
     }
+
 
 
 
