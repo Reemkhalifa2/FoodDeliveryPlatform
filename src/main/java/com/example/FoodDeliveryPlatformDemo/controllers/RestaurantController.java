@@ -26,6 +26,26 @@ public class RestaurantController {
     }
     RestaurantService restaurantService;
 
+    @GetMapping("/{id}/analytics")
+    public ResponseEntity<String> analytics(
+            @PathVariable Integer id)
+    {
+        return ResponseEntity.ok(
+                restaurantService.analytics(id)
+        );
+    }
+
+    @GetMapping("{id}/search")
+    public ResponseEntity<List<MenuItemResponseDTO>> searchMenuItems(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Double minCalories,
+            @RequestParam(required = false) Double maxCalories) {
+
+        return ResponseEntity.ok(
+                restaurantService.searchMenuItems(id,keyword, minCalories, maxCalories)
+        );
+    }
     @PostMapping("restaurantOwner")
     public ResponseEntity<RestaurantOwnerResponseDTO> addRestaurantOwner(@Valid @RequestBody RestaurantOwnerRequestDTO restaurantOwnerRequestDTO){
         return ResponseEntity.ok(restaurantService.addRestaurantOwner(restaurantOwnerRequestDTO));

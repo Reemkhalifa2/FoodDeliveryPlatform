@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.OrderItemRequestDTO;
@@ -7,11 +8,14 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.CorporateOrderResponseD
 import com.example.FoodDeliveryPlatformDemo.dto.response.OrderResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("orders")
@@ -21,7 +25,35 @@ public class OrderController {
         this.orderService = orderService;
     }
     OrderService orderService;
+    @GetMapping("/customer/{customerId}")
+    public Page<Order> getCustomerOrders(
+            @PathVariable Integer customerId,
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
+        return orderService.getOrders(
+                customerId,
+                status,
+                from,
+                to,
+                page,
+                size
+        );
+    }
+
+    @PostMapping("/{id}/reorder")
+    public ResponseEntity<OrderResponseDTO> reorder(@PathVariable Integer id) {
+        OrderResponseDTO responseDTO = orderService.reorder(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+    @GetMapping("/{id}/timeline")
+    public ResponseEntity<Map<Date, OrderStatus>> orderStatusHistory(@PathVariable Integer id){
+            return ResponseEntity.ok(orderService.getTimeline(id));
+    }
     @PostMapping("/customer/{customerId}/restaurant/{restaurantId}")
     public ResponseEntity<OrderResponseDTO> createOrder(
             @PathVariable Integer customerId,

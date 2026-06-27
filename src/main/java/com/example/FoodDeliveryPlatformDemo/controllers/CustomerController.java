@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.patch.CustomerPatchDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerAddressRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CustomerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.CustomerAddressResponseDTO;
@@ -13,6 +14,7 @@ import com.example.FoodDeliveryPlatformDemo.services.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +32,13 @@ public class CustomerController {
 
     CustomerService customerService;
     OrderService orderService;
+    @PatchMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> patchCustomer(@PathVariable Integer id , @RequestBody CustomerPatchDTO dto){
+        return ResponseEntity.ok(customerService.patchCustomer(id,dto ));
+    }
     @GetMapping("/{id}/orders/page")
     public ResponseEntity<Page<Order>> getOrderHistory(
-            @PathVariable String id,
+            @PathVariable Integer id,
             @RequestParam OrderStatus status,
             @RequestParam String from,
             @RequestParam String to,
@@ -52,7 +58,8 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
-        return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
+        CustomerResponseDTO response = customerService.createCustomer(customerRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
@@ -87,7 +94,8 @@ public class CustomerController {
 
     @PostMapping("/{id}/addresses")
     public ResponseEntity<CustomerResponseDTO> addAddress(@PathVariable Integer id,@Valid @RequestBody CustomerAddressRequestDTO customerAddressRequestDTO) {
-        return ResponseEntity.ok(customerService.addAddress(id, customerAddressRequestDTO));
+        CustomerResponseDTO response = customerService.addAddress(id, customerAddressRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}/addresses")
@@ -100,6 +108,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.setDefault(addressId));
     }
 
+    //address for customer is not deleted
     @DeleteMapping("/addresses/{addressId}")
     public ResponseEntity<String> deleteAddress(@PathVariable Integer addressId) {
         return ResponseEntity.ok(customerService.deleteAddress(addressId));

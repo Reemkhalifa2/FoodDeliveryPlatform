@@ -14,7 +14,7 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
     @Query("SELECT ca.customer FROM CustomerAddress ca WHERE ca.city = :city AND ca.isActive=true")
     List<Customer>findByCity(@Param("city") String city);
 
-    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.isActive=true AND ca.id=:id")
+    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.isActive = true AND ca.id=:id")
     CustomerAddress getById(@Param("id") Integer id);
 
 

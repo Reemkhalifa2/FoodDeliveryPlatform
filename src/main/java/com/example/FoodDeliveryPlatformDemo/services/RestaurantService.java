@@ -10,14 +10,13 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantOwnerResponse
 import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.*;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
-import com.example.FoodDeliveryPlatformDemo.exceptions.MenuItemNotFoundException;
-import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
-import com.example.FoodDeliveryPlatformDemo.exceptions.OwnerNotFoundException;
-import com.example.FoodDeliveryPlatformDemo.exceptions.RestaurantNotFoundException;
+import com.example.FoodDeliveryPlatformDemo.exceptions.*;
 import com.example.FoodDeliveryPlatformDemo.repositories.*;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.ls.LSInput;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,12 +30,14 @@ public class RestaurantService {
     @Autowired
     public RestaurantService(RestaurantOwnerRepository restaurantOwnerRepository,
                              OrderRepository orderRepository,
+                             ReviewRepository reviewRepository,
                              RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository, ComboMealRepository comboMealRepository) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
         this.comboMealRepository = comboMealRepository;
         this.orderRepository = orderRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     RestaurantRepository restaurantRepository;
@@ -44,6 +45,37 @@ public class RestaurantService {
     MenuItemRepository menuItemRepository;
     ComboMealRepository comboMealRepository;
     OrderRepository orderRepository;
+    ReviewRepository reviewRepository;
+
+
+    public List<MenuItemResponseDTO> searchMenuItems(
+            Integer restaurantId,
+            String keyword,
+            Double minCalories,
+            Double maxCalories) {
+
+        return MenuItemResponseDTO.toResponse(menuItemRepository.findByRestaurantId(restaurantId,keyword, minCalories, maxCalories));
+    }
+
+    public String analytics(Integer id){
+        if(HelperUtils.isNull(restaurantRepository.getById(id))){throw new RestaurantNotFoundException();}
+        if(HelperUtils.isNull(reviewRepository.findByRestaurantId(id))){throw new ObjectNotFoundException("No Review for this restaurant");}
+        Double avgRating =  reviewRepository.findRatingByRestaurantId(id);
+        if(HelperUtils.isNull(orderRepository.findByRestaurantId(id))){throw new ObjectNotFoundException("No revenue for this restaurant");}
+        Double revenue = orderRepository.sumDeliveredOrders(id);
+        Integer completedOrders = orderRepository.countCompletedOrders(id);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Restaurant Analytics\n");
+        sb.append("Restaurant ID: ").append(id).append("\n");
+        sb.append("Average Rating: ").append(avgRating).append("\n");
+        sb.append("Total Revenue: ").append(revenue).append("\n");
+        sb.append("Completed Orders: ").append(completedOrders).append("\n");
+
+        return sb.toString();
+
+    }
+
 
 
     public RestaurantOwnerResponseDTO addRestaurantOwner(RestaurantOwnerRequestDTO restaurantOwnerRequestDTO) {

@@ -143,11 +143,15 @@ public class CustomerService{
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
-        if (points < 0) {
+        if (HelperUtils.isNegative(points)) {
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
 
-        customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
+        if(HelperUtils.isNull(customer.getLoyaltyPoints() )){
+            customer.setLoyaltyPoints(points);
+        }else{
+            customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
+        }
         customer.setUpdatedDate(new Date());
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);

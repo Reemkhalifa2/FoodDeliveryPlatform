@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -43,7 +44,37 @@ public class OrderService {
     OrderItemRepository orderItemRepository;
     CorporateOrderRepository corporateOrderRepository;
 
-    public Page<Order> getOrders(String id, OrderStatus status,
+    public OrderResponseDTO reorder(Integer id) {
+        Order oldOrder = orderRepository.getById(id);
+        if(HelperUtils.isNull(oldOrder))throw new OrderNotFoundException();
+
+        Order newOrder = new Order();
+
+        newOrder.setCustomer(oldOrder.getCustomer());
+        newOrder.setOrderItems(oldOrder.getOrderItems());
+        newOrder.setStatus(OrderStatus.PENDING);
+        newOrder.getStatusHistory().put(new Date() , OrderStatus.PENDING);
+        newOrder.setSubtotal(oldOrder.getSubtotal());
+        newOrder.setIsActive(true);
+        newOrder.setCreatedDate(new Date());
+
+        newOrder.setTotalAmount(oldOrder.getTotalAmount());
+
+
+        return OrderResponseDTO.toResponse(orderRepository.save(newOrder));
+    }
+
+    public Map<Date,OrderStatus> getTimeline(Integer id){
+
+        Order order = orderRepository.getById(id);
+        if(HelperUtils.isNull(order)) throw new OrderNotFoundException();
+
+
+        return order.getStatusHistory();
+
+    }
+
+    public Page<Order> getOrders(Integer id, OrderStatus status,
                                  String from, String to,
                                  int page, int size) {
 
@@ -74,6 +105,7 @@ public class OrderService {
         order.setDeliveryFee(restaurant.getDeliveryFee());
         order.setStatus(OrderStatus.CREATED);
         order.setCreatedDate(new Date());
+        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);
     }
@@ -99,7 +131,7 @@ public class OrderService {
 
                 OrderItem orderItem = OrderItemRequestDTO.toEntity(dto);
                 orderItem.setUnitPrice(menuItem.getPrice());
-                orderItem.setTotalPrice(itemTotal);   // FIX 1: was wrongly set to cumulative subTotal
+                orderItem.setTotalPrice(itemTotal);
                 orderItem.setIsActive(true);
                 orderItem.setCreatedDate(new Date());
                 orderItemRepository.save(orderItem);
@@ -109,6 +141,7 @@ public class OrderService {
 
         order.setIsActive(true);
         order.setStatus(OrderStatus.CREATED);
+        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         order.setUpdatedDate(new Date());
         order.setOrderCode(HelperUtils.generateId("Order-", 4));
         order.setSubtotal(subTotal);
@@ -155,6 +188,7 @@ public class OrderService {
 
         order.setIsActive(true);
         order.setStatus(OrderStatus.CREATED);
+        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         order.setCreatedDate(new Date());
         order.setOrderCode(HelperUtils.generateId("Order-", 4));
         order.setDeliveryFee(restaurant.getDeliveryFee());
@@ -291,6 +325,7 @@ public class OrderService {
             throw new OrderNotFoundException();
         }
         order.setStatus(newStatus);
+        order.getStatusHistory().put(new Date() , newStatus);
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);
@@ -305,6 +340,8 @@ public class OrderService {
             throw new InvalidOrderStateException();
         }
         order.setStatus(OrderStatus.CANCELLED);
+        order.getStatusHistory().put(new Date() , OrderStatus.CANCELLED);
+
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);
@@ -355,6 +392,8 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
+        order.getStatusHistory().put(new Date() , OrderStatus.CONFIRMED);
+
         order.setUpdatedDate(new Date());
         order = orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);

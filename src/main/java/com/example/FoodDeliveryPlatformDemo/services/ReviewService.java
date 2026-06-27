@@ -14,6 +14,9 @@ import com.example.FoodDeliveryPlatformDemo.repositories.RestaurantRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.ReviewRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -25,7 +28,7 @@ public class ReviewService {
     @Autowired
     public ReviewService(CustomerRepository customerRepository,
                          DriverRepository driverRepository,
-                         RestaurantRepository restaurantRepository,ReviewRepository reviewRepository) {
+                         RestaurantRepository restaurantRepository, ReviewRepository reviewRepository) {
         this.customerRepository = customerRepository;
         this.reviewRepository = reviewRepository;
         this.restaurantRepository = restaurantRepository;
@@ -38,13 +41,13 @@ public class ReviewService {
     DriverRepository driverRepository;
 
     public ReviewResponseDTO leaveRestaurantReview(Integer customerId, Integer restaurantId, int rating, String
-            comment){
+            comment) {
         Customer customer = customerRepository.findByID(customerId);
-        if(HelperUtils.isNull(customer)){
+        if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
-        if(HelperUtils.isNull(restaurant)){
+        if (HelperUtils.isNull(restaurant)) {
             throw new RestaurantNotFoundException();
         }
         Review review = new Review();
@@ -62,13 +65,13 @@ public class ReviewService {
 
 
     public ReviewResponseDTO leaveDriverReview(Integer customerId, Integer driverId, int rating, String
-            comment){
+            comment) {
         Customer customer = customerRepository.findByID(customerId);
-        if(HelperUtils.isNull(customer)){
+        if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }
         DeliveryDriver deliveryDriver = driverRepository.getById(driverId);
-        if(HelperUtils.isNull(deliveryDriver)){
+        if (HelperUtils.isNull(deliveryDriver)) {
             throw new ObjectNotFoundException("Driver not found");
         }
         Review review = new Review();
@@ -83,15 +86,18 @@ public class ReviewService {
         customerRepository.save(customer);
         return ReviewResponseDTO.toResponse(review);
     }
-    public List<ReviewResponseDTO> getRestaurantReviews(Integer restaurantId){
+
+    public List<ReviewResponseDTO> getRestaurantReviews(Integer restaurantId) {
         return ReviewResponseDTO.toResponse(reviewRepository.findByRestaurantId(restaurantId));
     }
-    public List<ReviewResponseDTO> getDriverReviews(Integer driverId){
+
+    public List<ReviewResponseDTO> getDriverReviews(Integer driverId) {
         return ReviewResponseDTO.toResponse(reviewRepository.findByDriverId(driverId));
     }
-    public ReviewResponseDTO deleteReview(Integer reviewId){
+
+    public ReviewResponseDTO deleteReview(Integer reviewId) {
         Review review = reviewRepository.getById(reviewId);
-        if(HelperUtils.isNull(review)){
+        if (HelperUtils.isNull(review)) {
             throw new ObjectNotFoundException("review not found");
         }
         review.setIsActive(false);
@@ -100,5 +106,23 @@ public class ReviewService {
         return ReviewResponseDTO.toResponse(review);
     }
 
+    public Double getRestaurantAverageRating(Integer id) {
+        if (HelperUtils.isNull(restaurantRepository.getById(id))) {
+            throw new RestaurantNotFoundException();
+        }
+        return reviewRepository.findRatingByRestaurantId(id);
+    }
+
+    public Double getDriverAverageRating(Integer id) {
+        if (HelperUtils.isNull(driverRepository.getById(id))) {
+            throw new ObjectNotFoundException("Driver not found");
+        }
+        return reviewRepository.findRatingByDriverId(id);
+    }
+
+    public Page<Review> findByRestaurantId(Integer id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return reviewRepository.findByRestaurantId(id, pageable);
+    }
 
 }

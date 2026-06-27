@@ -35,6 +35,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.isActive = true AND o.status ='DELIVERED' AND o.delivery.assignedAt = :date ")
     Double sumDeliveredOrdersByDate(@Param("date") Date date);
 
+    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.isActive = true AND o.status ='DELIVERED' AND o.restaurant.id = :id ")
+    Double sumDeliveredOrders(@Param("id") Integer id);
+
     @Query("SELECT  o FROM Order o WHERE o.isActive = true AND o.delivery.assignedAt = :date ")
     List<Order> OrdersByDate(@Param("date") Date date);
 
@@ -48,12 +51,14 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
           AND  o.createdDate BETWEEN :fromDate AND :toDate
     """)
     Page<Order> findByFilters(
-            @Param("id")       String    id,
+            @Param("id")       Integer    id,
             @Param("status") OrderStatus status,
             @Param("fromDate") Date fromDate,
             @Param("toDate")   Date toDate,
             Pageable pageable
     );
+
+
 
 
 
