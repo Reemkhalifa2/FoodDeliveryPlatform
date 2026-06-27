@@ -51,6 +51,9 @@ public class CustomerService{
         }
 
         if (dto.getEmail() != null) {
+            if (customerRepository.existsByEmail(dto.getEmail())) {
+                throw new InvalidRequestException("Email already exists");
+            }
             if(dto.getEmail().equalsIgnoreCase(customer.getEmail())){
                 throw new InvalidRequestException("New Value can not be as previous value");
             }
@@ -88,9 +91,13 @@ public class CustomerService{
             throw new NullRequestBodyException("Customer request cannot be null.");
         }
         Customer customer = CustomerRequestDTO.toEntity(dto);
+        if (customerRepository.existsByEmail(customer.getEmail())) {
+            throw new InvalidRequestException("Email already exists");
+        }
         customer.setIsActive(true);
         customer.setCustomerCode(HelperUtils.generateId("CUST-",4));
         customer.setCreatedDate(new Date());
+        customer.setLoyaltyPoints(0);
         customerRepository.save(customer);
 
         return CustomerResponseDTO.toResponse(customer);
@@ -105,11 +112,15 @@ public class CustomerService{
         }
 
         Customer customer = CustomerRequestDTO.toEntity(dto);
+        if (customerRepository.existsByEmail(customer.getEmail())) {
+            throw new InvalidRequestException("Email already exists");
+        }
         CustomerAddress address = CustomerAddressRequestDTO.toEntity(initialAddress);
         address.setIsActive(true);
         customer.getCustomerAddresses().add(address);
         customer.setCustomerCode(HelperUtils.generateId("CUST-",4));
         customer.setCreatedDate(new Date());
+        customer.setLoyaltyPoints(0);
         customerAddressRepository.save(address);
 
         customerRepository.save(customer);
@@ -130,6 +141,8 @@ public class CustomerService{
         customerAddress.setIsActive(true);
         customerAddress.setCreatedDate(new Date());
         customer.getCustomerAddresses().add(customerAddress);
+        customerAddress.setCustomer(customer);
+        customerAddress.setIsActive(true);
         customerAddressRepository.save(customerAddress);
         customerRepository.save(customer);
 
@@ -147,11 +160,8 @@ public class CustomerService{
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
 
-        if(HelperUtils.isNull(customer.getLoyaltyPoints() )){
-            customer.setLoyaltyPoints(points);
-        }else{
-            customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
-        }
+
+        customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
         customer.setUpdatedDate(new Date());
         customerRepository.save(customer);
         return CustomerResponseDTO.toResponse(customer);
@@ -167,7 +177,7 @@ public class CustomerService{
             throw new InvalidLoyaltyPointsException("Points must be positive");
         }
 
-        if (HelperUtils.isNotNull(customer.getLoyaltyPoints()) && pointsDeducted > customer.getLoyaltyPoints()) {
+        if (pointsDeducted > customer.getLoyaltyPoints()) {
             throw new InvalidLoyaltyPointsException("Not enough points");
         }
         customer.setLoyaltyPoints(HelperUtils.subtract(customer.getLoyaltyPoints(), pointsDeducted));
@@ -187,7 +197,7 @@ public class CustomerService{
     }
 
     public List<CustomerResponseDTO> getAllCustomers(){
-        return CustomerResponseDTO.toResponse(customerRepository.findAll());
+        return CustomerResponseDTO.toResponse(customerRepository.getAll());
     }
     public CustomerResponseDTO getById(Integer id){
         if(HelperUtils.isNull(id)){
@@ -220,6 +230,11 @@ public class CustomerService{
 
     public CustomerAddressResponseDTO setDefault(Integer addressId){
         CustomerAddress customerAddress = customerAddressRepository.getById(addressId);
+        CustomerAddress defaultAddress = customerAddressRepository.getDefaultAddress(customerAddress.getCustomer().getId());
+        if(HelperUtils.isNotNull(defaultAddress)){
+        defaultAddress.setIsDefault(false);
+            customerAddressRepository.save(defaultAddress);}
+
         if(HelperUtils.isNull(customerAddress)){
             throw new AddressNotFoundException();
         }

@@ -32,8 +32,10 @@ public class CustomerResponseDTO {
         dto.setPhone(customer.getPhone());
         dto.setLoyaltyPoints(customer.getLoyaltyPoints());
         dto.setCustomerCode(customer.getCustomerCode());
-        dto.setAddress(CustomerAddressSummaryDTO.toSummary(customer.getCustomerAddresses()));
+        List<CustomerAddress> activeAddress = customer.getCustomerAddresses().stream()
+                .filter(CustomerAddress::getIsActive).toList();
 
+        dto.setAddress(CustomerAddressSummaryDTO.toSummary(activeAddress));
         return dto;
     }
 

@@ -33,14 +33,16 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             @Param("end") Date end
     );
     @Query("SELECT c FROM Customer c WHERE c.isActive=true ")
-    List<Customer> findAll();
+    List<Customer> getAll();
 
-    @Query("SELECT c.customerAddresses FROM Customer c WHERE c.id = :customerId")
+    @Query("SELECT c.customerAddresses FROM Customer c WHERE c.id = :customerId AND c.isActive = true")
     List<CustomerAddress> findAddressesByCustomerId(@Param("customerId") Integer customerId);
     @Query("SELECT c.orders FROM Customer c WHERE c.id = :customerId")
     List<Order> findOrdersByCustomerId(@Param("customerId") Integer customerId);
 
     @Query("SELECT c FROM Customer c  WHERE c.isActive = true ORDER BY c.loyaltyPoints DESC LIMIT 10")
     List<Customer> findTop10ByOrderByLoyaltyPointsDesc();
+
+    boolean existsByEmail(String email);
 
 }
