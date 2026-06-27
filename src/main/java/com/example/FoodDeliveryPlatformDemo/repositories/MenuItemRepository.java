@@ -16,9 +16,19 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
 
     @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.restaurant.id=:id")
     MenuItem findByRestaurantId(@Param("id") Integer id);
-    @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.restaurant.id=:id AND m.name =: keyword AND m.calories>=:minCalories AND m.calories>=:maxCalories")
-    List<MenuItem> findByRestaurantId(@Param("id") Integer id, @Param("keyword") String keyword ,  @Param("minCalories") Double minCalories, @Param("maxCalories") Double maxCalories);
-
+    @Query("""
+SELECT m FROM MenuItem m
+WHERE m.restaurant.id = :id
+AND (:name IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%')))
+AND (:minCalories IS NULL OR m.calories >= :minCalories)
+AND (:maxCalories IS NULL OR m.calories <= :maxCalories)
+""")
+    List<MenuItem> searchMenuItems(
+            @Param("id") Integer id,
+            @Param("name") String name,
+            @Param("minCalories") Double minCalories,
+            @Param("maxCalories") Double maxCalories
+    );
     @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.restaurant.id=:id AND m.isAvailable = true")
     MenuItem findByRestaurantIdAndIsAvailableTrue(@Param("id") Integer id);
 

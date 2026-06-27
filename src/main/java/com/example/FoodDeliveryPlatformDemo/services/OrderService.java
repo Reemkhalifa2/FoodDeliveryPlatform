@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
+import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.OrderItemRequestDTO;
@@ -15,21 +16,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderService {
 
     @Autowired
     public OrderService(OrderRepository orderRepository,
+                        StatusHistoryRepository statusHistoryRepository,
                         CustomerRepository customerRepository,
                         RestaurantRepository restaurantRepository,
                         MenuItemRepository menuItemRepository,
                         OrderItemRepository orderItemRepository,
-                        CorporateOrderRepository corporateOrderRepository) {
+                        CorporateOrderRepository corporateOrderRepository
+    ) {
         this.orderRepository = orderRepository;
+        this.statusHistoryRepository = statusHistoryRepository;
         this.customerRepository = customerRepository;
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
@@ -37,6 +41,7 @@ public class OrderService {
         this.corporateOrderRepository = corporateOrderRepository;
     }
 
+    StatusHistoryRepository statusHistoryRepository;
     OrderRepository orderRepository;
     CustomerRepository customerRepository;
     RestaurantRepository restaurantRepository;
@@ -46,32 +51,48 @@ public class OrderService {
 
     public OrderResponseDTO reorder(Integer id) {
         Order oldOrder = orderRepository.getById(id);
-        if(HelperUtils.isNull(oldOrder))throw new OrderNotFoundException();
+        if(HelperUtils.isNull(oldOrder)) throw new OrderNotFoundException();
 
         Order newOrder = new Order();
-
         newOrder.setCustomer(oldOrder.getCustomer());
-        newOrder.setOrderItems(oldOrder.getOrderItems());
         newOrder.setStatus(OrderStatus.PENDING);
-        newOrder.getStatusHistory().put(new Date() , OrderStatus.PENDING);
         newOrder.setSubtotal(oldOrder.getSubtotal());
         newOrder.setIsActive(true);
         newOrder.setCreatedDate(new Date());
-
         newOrder.setTotalAmount(oldOrder.getTotalAmount());
+        newOrder.setDeliveryFee(oldOrder.getDeliveryFee());
+        newOrder.setRestaurant(oldOrder.getRestaurant());
+        orderRepository.save(newOrder);
 
+        List<OrderItem> newItems = new ArrayList<>();
+        for (OrderItem oldItem : oldOrder.getOrderItems()) {
+            OrderItem newItem = new OrderItem();
+            newItem.setMenuItem(oldItem.getMenuItem());
+            newItem.setQuantity(oldItem.getQuantity());
+            newItem.setUnitPrice(oldItem.getUnitPrice());
+            newItem.setTotalPrice(oldItem.getTotalPrice());
+            newItem.setIsActive(true);
+            newItem.setCreatedDate(new Date());
+            newItem.setOrder(newOrder);
+            orderItemRepository.save(newItem);
+            newItems.add(newItem);
+        }
+        newOrder.setOrderItems(newItems);
+        orderRepository.save(newOrder);
 
-        return OrderResponseDTO.toResponse(orderRepository.save(newOrder));
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(newOrder);
+        history.setStatus(OrderStatus.PENDING);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
+        return OrderResponseDTO.toResponse(newOrder);
     }
 
-    public Map<Date,OrderStatus> getTimeline(Integer id){
-
+    public List<OrderStatusHistory> getTimeline(Integer id){
         Order order = orderRepository.getById(id);
         if(HelperUtils.isNull(order)) throw new OrderNotFoundException();
-
-
-        return order.getStatusHistory();
-
+        return statusHistoryRepository.findByOrderId(id);
     }
 
     public Page<Order> getOrders(Integer id, OrderStatus status,
@@ -85,8 +106,7 @@ public class OrderService {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-
-        return orderRepository.findByFilters(id, status, fromDate, toDate, pageable) ;
+        return orderRepository.findByFilters(id, status, fromDate, toDate, pageable);
     }
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId) {
@@ -105,8 +125,14 @@ public class OrderService {
         order.setDeliveryFee(restaurant.getDeliveryFee());
         order.setStatus(OrderStatus.CREATED);
         order.setCreatedDate(new Date());
-        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CREATED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -125,7 +151,6 @@ public class OrderService {
                     throw new MenuItemNotFoundException("Item Not Found");
                 }
 
-                // FIX 1: calculate item-level total first, then add to running subTotal
                 double itemTotal = dto.getQuantity() * menuItem.getPrice();
                 subTotal += itemTotal;
 
@@ -141,12 +166,18 @@ public class OrderService {
 
         order.setIsActive(true);
         order.setStatus(OrderStatus.CREATED);
-        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         order.setUpdatedDate(new Date());
         order.setOrderCode(HelperUtils.generateId("Order-", 4));
         order.setSubtotal(subTotal);
         order.setTotalAmount(HelperUtils.calculateTotal(subTotal, order.getRestaurant().getDeliveryFee()));
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CREATED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -172,15 +203,15 @@ public class OrderService {
                     throw new MenuItemNotFoundException("Item Not Found");
                 }
 
-                // FIX 3: unitPrice and totalPrice were never set in this overload
                 double itemTotal = dto.getQuantity() * menuItem.getPrice();
                 subTotal += itemTotal;
 
                 OrderItem orderItem = OrderItemRequestDTO.toEntity(dto);
-                orderItem.setUnitPrice(menuItem.getPrice());   // FIX 3
-                orderItem.setTotalPrice(itemTotal);            // FIX 3
+                orderItem.setUnitPrice(menuItem.getPrice());
+                orderItem.setTotalPrice(itemTotal);
                 orderItem.setIsActive(true);
                 orderItem.setCreatedDate(new Date());
+                orderItem.setOrder(order);
                 orderItemRepository.save(orderItem);
                 order.getOrderItems().add(orderItem);
             }
@@ -188,13 +219,19 @@ public class OrderService {
 
         order.setIsActive(true);
         order.setStatus(OrderStatus.CREATED);
-        order.getStatusHistory().put(new Date() , OrderStatus.CREATED);
         order.setCreatedDate(new Date());
         order.setOrderCode(HelperUtils.generateId("Order-", 4));
         order.setDeliveryFee(restaurant.getDeliveryFee());
         order.setSubtotal(subTotal);
         order.setTotalAmount(HelperUtils.calculateTotal(subTotal, restaurant.getDeliveryFee()));
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CREATED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -225,8 +262,8 @@ public class OrderService {
                 subTotal += itemTotal;
 
                 OrderItem orderItem = OrderItemRequestDTO.toEntity(dto);
-                orderItem.setUnitPrice(menuItem.getPrice());   // FIX 4
-                orderItem.setTotalPrice(itemTotal);            // FIX 4
+                orderItem.setUnitPrice(menuItem.getPrice());
+                orderItem.setTotalPrice(itemTotal);
                 orderItem.setIsActive(true);
                 orderItem.setCreatedDate(new Date());
                 orderItemRepository.save(orderItem);
@@ -243,6 +280,13 @@ public class OrderService {
         order.setDeliveryNotes(notes);
         order.setTotalAmount(HelperUtils.calculateTotal(subTotal, restaurant.getDeliveryFee()));
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CREATED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -269,7 +313,7 @@ public class OrderService {
         double itemTotal = menuItem.getPrice() * quantity;
         double newSubtotal = (order.getSubtotal() != null ? order.getSubtotal() : 0.0) + itemTotal;
         order.setSubtotal(newSubtotal);
-        order.setTotalAmount(HelperUtils.calculateTotal(newSubtotal, order.getDeliveryFee()));  // FIX 6
+        order.setTotalAmount(HelperUtils.calculateTotal(newSubtotal, order.getDeliveryFee()));
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);
@@ -285,13 +329,12 @@ public class OrderService {
             throw new ObjectNotFoundException("Order Item Not Found.");
         }
 
-        order.getOrderItems().remove(orderItem);
-
         double deductedAmount = HelperUtils.deductedAmount(orderItem.getUnitPrice(), orderItem.getQuantity());
+        order.getOrderItems().remove(orderItem);
 
         double newSubtotal = (order.getSubtotal() != null ? order.getSubtotal() : 0.0) - deductedAmount;
         order.setSubtotal(newSubtotal);
-        order.setTotalAmount(HelperUtils.calculateTotal(newSubtotal, order.getDeliveryFee()));  // FIX 7
+        order.setTotalAmount(HelperUtils.calculateTotal(newSubtotal, order.getDeliveryFee()));
 
         order.setUpdatedDate(new Date());
 
@@ -312,12 +355,12 @@ public class OrderService {
             order.setTotalAmount(0.0);
         }
         Double totalAmount = HelperUtils.calculateTotal(order.getTotalAmount(), order.getDeliveryFee(), discountAmount);
+        order.setDiscountAmount(order.getTotalAmount() -totalAmount);
         order.setTotalAmount(totalAmount);
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
         return OrderResponseDTO.toResponse(order);
     }
-
 
     public OrderResponseDTO updateOrderStatus(Integer orderId, OrderStatus newStatus) {
         Order order = orderRepository.getById(orderId);
@@ -325,9 +368,15 @@ public class OrderService {
             throw new OrderNotFoundException();
         }
         order.setStatus(newStatus);
-        order.getStatusHistory().put(new Date() , newStatus);
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(newStatus);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -340,10 +389,15 @@ public class OrderService {
             throw new InvalidOrderStateException();
         }
         order.setStatus(OrderStatus.CANCELLED);
-        order.getStatusHistory().put(new Date() , OrderStatus.CANCELLED);
-
         order.setUpdatedDate(new Date());
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CANCELLED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
 
@@ -392,12 +446,18 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
-        order.getStatusHistory().put(new Date() , OrderStatus.CONFIRMED);
-
         order.setUpdatedDate(new Date());
         order = orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.CONFIRMED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         return OrderResponseDTO.toResponse(order);
     }
+
     public OrderResponseDTO getById(Integer id){
         Order order = orderRepository.getById(id);
         if(HelperUtils.isNull(order)){
@@ -410,8 +470,8 @@ public class OrderService {
         List<Order> orders = orderRepository.findByRestaurantId(id);
         return OrderResponseDTO.toResponse(orders);
     }
-    public String dailySummary(Date date) {
 
+    public String dailySummary(Date date) {
         List<Order> orders = orderRepository.OrdersByDate(date);
 
         double fees = orders.stream()
@@ -421,7 +481,4 @@ public class OrderService {
         return "Total Orders: " + orders.size()
                 + ", Total Fees: " + fees;
     }
-
-
-
 }

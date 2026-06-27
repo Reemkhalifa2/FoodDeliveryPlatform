@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 @Entity
 @Data
@@ -24,7 +24,6 @@ public class Order extends BaseEntity{
     private Double discountAmount;
     private Double totalAmount;
     private String deliveryNotes;
-    private HashMap<Date , OrderStatus> statusHistory =new HashMap<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -37,5 +36,6 @@ public class Order extends BaseEntity{
     private Delivery delivery;
     @OneToOne
     private Payment payment;
-
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderStatusHistory> statusHistory = new ArrayList<>();
 }

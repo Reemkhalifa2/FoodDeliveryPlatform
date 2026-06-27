@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
@@ -13,9 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("orders")
@@ -25,6 +24,8 @@ public class OrderController {
         this.orderService = orderService;
     }
     OrderService orderService;
+
+
     @GetMapping("/customer/{customerId}")
     public Page<Order> getCustomerOrders(
             @PathVariable Integer customerId,
@@ -51,7 +52,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     @GetMapping("/{id}/timeline")
-    public ResponseEntity<Map<Date, OrderStatus>> orderStatusHistory(@PathVariable Integer id){
+    public ResponseEntity<List<OrderStatusHistory>> orderStatusHistory(@PathVariable Integer id){
             return ResponseEntity.ok(orderService.getTimeline(id));
     }
     @PostMapping("/customer/{customerId}/restaurant/{restaurantId}")
