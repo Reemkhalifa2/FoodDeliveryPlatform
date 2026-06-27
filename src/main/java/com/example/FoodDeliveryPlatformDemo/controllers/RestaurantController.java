@@ -38,12 +38,12 @@ public class RestaurantController {
     @GetMapping("{id}/search")
     public ResponseEntity<List<MenuItemResponseDTO>> searchMenuItems(
             @PathVariable Integer id,
-            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) Double minCalories,
             @RequestParam(required = false) Double maxCalories) {
 
         return ResponseEntity.ok(
-                restaurantService.searchMenuItems(id,keyword, minCalories, maxCalories)
+                restaurantService.searchMenuItems(id, name, minCalories, maxCalories)
         );
     }
     @PostMapping("restaurantOwner")

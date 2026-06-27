@@ -12,6 +12,7 @@ import lombok.Data;
 public class Person extends BaseEntity{
     private String firstName;
     private String lastName;
+    @Column(nullable = false, unique = true)
     private String email;
     private String phone;
     private String passwordHash;

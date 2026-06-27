@@ -50,11 +50,11 @@ public class RestaurantService {
 
     public List<MenuItemResponseDTO> searchMenuItems(
             Integer restaurantId,
-            String keyword,
+            String name,
             Double minCalories,
             Double maxCalories) {
 
-        return MenuItemResponseDTO.toResponse(menuItemRepository.findByRestaurantId(restaurantId,keyword, minCalories, maxCalories));
+        return MenuItemResponseDTO.toResponse(menuItemRepository.searchMenuItems(restaurantId,name, minCalories, maxCalories));
     }
 
     public String analytics(Integer id){
@@ -83,6 +83,9 @@ public class RestaurantService {
             throw new NullRequestBodyException("Request body is null");
         }
         RestaurantOwner restaurantOwner = RestaurantOwnerRequestDTO.toEntity(restaurantOwnerRequestDTO);
+        if (restaurantOwnerRepository.existsByEmail(restaurantOwner.getEmail())) {
+            throw new InvalidRequestException("Email already exists");
+        }
         restaurantOwner.setIsActive(true);
         restaurantOwner.setCreatedDate(new Date());
         restaurantOwnerRepository.save(restaurantOwner);

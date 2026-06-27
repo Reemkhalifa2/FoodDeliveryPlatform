@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface RestaurantOwnerRepository extends JpaRepository<RestaurantOwner, Integer> {
     @Query("SELECT o FROM RestaurantOwner o WHERE o.isActive = true AND o.id=:id")
     RestaurantOwner getById(@Param("id") Integer id);
+    boolean existsByEmail(String email);
+
 }
