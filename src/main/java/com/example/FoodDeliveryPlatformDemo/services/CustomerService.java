@@ -191,6 +191,14 @@ public class CustomerService{
         return OrderResponseDTO.toResponse(customerRepository.findOrdersByCustomerId(customerId));
     }
 
+    public List<CustomerResponseDTO> getTopLoyalCustomers() {
+
+        List<Customer> customers = customerRepository
+                .findTop10ByOrderByLoyaltyPointsDesc();
+
+        return CustomerResponseDTO.toResponse(customers);
+    }
+
 
 
 

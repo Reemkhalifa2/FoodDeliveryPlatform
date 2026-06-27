@@ -8,22 +8,20 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.ComboMealResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.MenuItemResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantOwnerResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantResponseDTO;
-import com.example.FoodDeliveryPlatformDemo.entities.ComboMeal;
-import com.example.FoodDeliveryPlatformDemo.entities.MenuItem;
-import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
-import com.example.FoodDeliveryPlatformDemo.entities.RestaurantOwner;
+import com.example.FoodDeliveryPlatformDemo.entities.*;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.exceptions.MenuItemNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.NullRequestBodyException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.OwnerNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.RestaurantNotFoundException;
-import com.example.FoodDeliveryPlatformDemo.repositories.ComboMealRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.MenuItemRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.RestaurantOwnerRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.RestaurantRepository;
+import com.example.FoodDeliveryPlatformDemo.repositories.*;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -31,17 +29,21 @@ import java.util.List;
 public class RestaurantService {
 
     @Autowired
-    public RestaurantService(RestaurantOwnerRepository restaurantOwnerRepository, RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository, ComboMealRepository comboMealRepository) {
+    public RestaurantService(RestaurantOwnerRepository restaurantOwnerRepository,
+                             OrderRepository orderRepository,
+                             RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository, ComboMealRepository comboMealRepository) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
         this.comboMealRepository = comboMealRepository;
+        this.orderRepository = orderRepository;
     }
 
     RestaurantRepository restaurantRepository;
     RestaurantOwnerRepository restaurantOwnerRepository;
     MenuItemRepository menuItemRepository;
     ComboMealRepository comboMealRepository;
+    OrderRepository orderRepository;
 
 
     public RestaurantOwnerResponseDTO addRestaurantOwner(RestaurantOwnerRequestDTO restaurantOwnerRequestDTO) {
@@ -219,6 +221,41 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
         return MenuItemResponseDTO.toResponse(menuItems);
     }
+
+    public String getRestaurantRevenue(Integer restaurantId, Date date){
+        Restaurant restaurant = restaurantRepository.getById(restaurantId);
+
+        if (HelperUtils.isNull(restaurant)) {
+            throw new RestaurantNotFoundException();
+        }
+
+        Date nextDay = Date.from(
+                date.toInstant().plus(1, ChronoUnit.DAYS)
+        );
+        List<Order> orders = orderRepository.findByOrderDateBetween(restaurantId,date,nextDay);
+        Double revenue = 0.0;
+        for(Order order : orders){
+            if(order.getStatus() == OrderStatus.DELIVERED){
+                revenue += order.getTotalAmount();
+            }
+        }
+
+        return "Total revenue for restaurant : "+restaurantId + " in date: " + date + ": "+HelperUtils.formatCurrency(revenue, "OMR");
+
+    }
+    public Integer totalLifetimeOrders(Integer restaurantId){
+        Restaurant restaurant = restaurantRepository.getById(restaurantId);
+        if(HelperUtils.isNull(restaurantId)){
+            throw new RestaurantNotFoundException();
+        }
+        List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
+        return orders.size();
+
+    }
+
+
+
+
 
 
 }

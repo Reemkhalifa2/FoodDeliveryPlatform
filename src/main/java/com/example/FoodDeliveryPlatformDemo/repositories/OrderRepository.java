@@ -16,11 +16,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.customer.id = :customerId")
     List<Order> findByCustomerId(@Param("customerId") Integer customerId);
 
-    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId and o.status = PENDING")
-    List<Order> findByRestaurantIdAndStatus(@Param("restaurantId") Integer restaurantId);
+    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId")
+    List<Order> findByRestaurantId(@Param("restaurantId") Integer restaurantId);
 
-    @Query("SELECT o FROM Order o WHERE o.isActive = true AND  o.createdDate BETWEEN :start AND :end")
-    List<Order>findByOrderDateBetween(@Param("start") Date start, @Param("end") Date end);
+    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId  AND  o.createdDate BETWEEN :start AND :end")
+    List<Order>findByOrderDateBetween(@Param("restaurantId") Integer restaurantId , @Param("start") Date start, @Param("end") Date end);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.delivery.id = :driverId AND o.status = :status")
     List<Order>findByDeliveryDriverIdAndStatus(@Param("driverId") Integer driverId, @Param("status") String status);
@@ -30,6 +30,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.isActive = true AND o.status ='DELIVERED' AND o.delivery.assignedAt = :date ")
     Double sumDeliveredOrdersByDate(@Param("date") Date date);
+
+    @Query("SELECT  o FROM Order o WHERE o.isActive = true AND o.delivery.assignedAt = :date ")
+    List<Order> OrdersByDate(@Param("date") Date date);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.id=:id")
     Order getById(@Param("id") Integer id);

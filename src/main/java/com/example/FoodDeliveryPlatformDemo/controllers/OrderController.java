@@ -74,7 +74,7 @@ public class OrderController {
 
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<OrderResponseDTO>> findByRestaurantIdAndStatus(@PathVariable Integer restaurantId){
-        return ResponseEntity.ok(orderService.findByRestaurantIdAndStatus(restaurantId));
+        return ResponseEntity.ok(orderService.findByRestaurantId(restaurantId));
     }
 
     @PostMapping("/corporate")

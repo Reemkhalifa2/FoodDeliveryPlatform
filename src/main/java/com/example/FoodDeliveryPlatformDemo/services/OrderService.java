@@ -349,9 +349,20 @@ public class OrderService {
         return OrderResponseDTO.toResponse(order);
     }
 
-    public List<OrderResponseDTO> findByRestaurantIdAndStatus(Integer id){
-        List<Order> orders = orderRepository.findByRestaurantIdAndStatus(id);
+    public List<OrderResponseDTO> findByRestaurantId(Integer id){
+        List<Order> orders = orderRepository.findByRestaurantId(id);
         return OrderResponseDTO.toResponse(orders);
+    }
+    public String dailySummary(Date date) {
+
+        List<Order> orders = orderRepository.OrdersByDate(date);
+
+        double fees = orders.stream()
+                .mapToDouble(Order::getDeliveryFee)
+                .sum();
+
+        return "Total Orders: " + orders.size()
+                + ", Total Fees: " + fees;
     }
 
 
