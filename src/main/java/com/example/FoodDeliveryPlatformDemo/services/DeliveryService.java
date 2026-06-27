@@ -6,6 +6,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.response.DeliveryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Delivery;
 import com.example.FoodDeliveryPlatformDemo.entities.DeliveryDriver;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
+import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidRequestException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.ObjectNotFoundException;
@@ -13,6 +14,7 @@ import com.example.FoodDeliveryPlatformDemo.exceptions.OrderNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.repositories.DeliveryRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.DriverRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.OrderRepository;
+import com.example.FoodDeliveryPlatformDemo.repositories.StatusHistoryRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,19 +26,26 @@ public class DeliveryService {
 
     DriverRepository driverRepository;
 
-    public DeliveryService(DeliveryRepository deliveryRepository, DriverRepository driverRepository,OrderRepository orderRepository) {
+    public DeliveryService(StatusHistoryRepository statusHistoryRepository,
+                           DeliveryRepository deliveryRepository,
+                           DriverRepository driverRepository,OrderRepository orderRepository) {
         this.deliveryRepository = deliveryRepository;
         this.driverRepository = driverRepository;
         this.orderRepository = orderRepository;
+        this.statusHistoryRepository = statusHistoryRepository;
     }
 
     DeliveryRepository deliveryRepository;
     OrderRepository orderRepository;
+    StatusHistoryRepository statusHistoryRepository;
 
 
 
     public DeliveryDriverResponseDTO createDriver(DeliveryDriverRequestDTO dto){
         DeliveryDriver deliveryDriver = DeliveryDriverRequestDTO.toEntity(dto);
+        if (driverRepository.existsByEmail(deliveryDriver.getEmail())) {
+            throw new InvalidRequestException("Email already exists");
+        }
         deliveryDriver.setCreatedDate(new Date());
         deliveryDriver.setIsActive(true);
 
@@ -162,9 +171,17 @@ public class DeliveryService {
         }
 
         delivery.setStatus("PICKED_UP");
+        delivery.setPickedUpAt(new Date());
         Order order = delivery.getOrder();
         order.setStatus(OrderStatus.OUT_FOR_DELIVERY);
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.OUT_FOR_DELIVERY);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         deliveryRepository.save(delivery);
         return DeliveryResponseDTO.toResponse(delivery);
     }
@@ -181,12 +198,17 @@ public class DeliveryService {
         }
 
         delivery.setStatus("DELIVERED");
-        delivery.setIsActive(false);
         delivery.setDeliveredAt(new Date());
         Order order = delivery.getOrder();
         order.setStatus(OrderStatus.DELIVERED);
-
         orderRepository.save(order);
+
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setStatus(OrderStatus.DELIVERED);
+        history.setChangedAt(new Date());
+        statusHistoryRepository.save(history);
+
         deliveryRepository.save(delivery);
         return DeliveryResponseDTO.toResponse(delivery);
     }

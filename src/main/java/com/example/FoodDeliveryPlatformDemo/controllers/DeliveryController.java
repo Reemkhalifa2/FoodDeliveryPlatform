@@ -12,7 +12,6 @@ import java.util.List;
 @RequestMapping("deliveries")
 public class DeliveryController {
 
-
     public DeliveryController(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }

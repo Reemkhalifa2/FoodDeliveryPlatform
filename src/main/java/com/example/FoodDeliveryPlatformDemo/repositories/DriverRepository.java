@@ -21,8 +21,11 @@ public interface DriverRepository extends JpaRepository<DeliveryDriver , Integer
     @Query("SElECT d FROM DeliveryDriver d WHERE d.isActive = true AND d.isOnline = true ")
     List<DeliveryDriver> getByIsOnline();
 
-    @Query("SELECT d FROM DeliveryDriver d WHERE d.isActive = true AND d.isOnline = true ORDER BY d.id ASC")
+    @Query("SELECT d FROM DeliveryDriver d WHERE d.isActive = true AND d.isOnline = true ORDER BY d.id ASC LIMIT 1")
     DeliveryDriver findFirstOnline();
+
+    boolean existsByEmail(String email);
+
 
 
 
