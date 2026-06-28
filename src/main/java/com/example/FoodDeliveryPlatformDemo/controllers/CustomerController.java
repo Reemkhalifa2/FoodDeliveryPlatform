@@ -39,19 +39,19 @@ public class CustomerController {
     @GetMapping("/{id}/orders/page")
     public ResponseEntity<Page<Order>> getOrderHistory(
             @PathVariable Integer id,
-            @RequestParam OrderStatus status,
-            @RequestParam String from,
-            @RequestParam String to,
-            @RequestParam Integer page,
-            @RequestParam Integer size) {
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
         Page<Order> response = orderService.getOrders(id, status, from, to, page, size);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/search")
     public Page<Customer> search(
-            @RequestParam String name,
-            @RequestParam Integer page,
-            @RequestParam Integer size) {
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
 
         return customerService.search(name, page, size);
     }
