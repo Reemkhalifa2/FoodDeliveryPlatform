@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +26,7 @@ public class PaymentRequestDTO {
 
         payment.setPaymentMethod(dto.getPaymentMethod());
         payment.setAmount(dto.getAmount());
-
+        payment.setUpdatedDate(new Date());
         return payment;
     }
 

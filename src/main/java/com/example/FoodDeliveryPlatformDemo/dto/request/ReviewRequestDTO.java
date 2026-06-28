@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +26,7 @@ public class ReviewRequestDTO {
 
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
+        review.setUpdatedDate(new Date());
 
         return review;
     }

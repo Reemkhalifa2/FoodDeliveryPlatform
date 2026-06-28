@@ -38,6 +38,9 @@ AND (:maxCalories IS NULL OR m.calories <= :maxCalories)
     @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.price >:min AND m.price < :max ")
     List<MenuItem>  findByPriceBetween(@Param("min") double min,@Param("max") double max);
 
+    @Query("SELECT oi.menuItem, SUM(oi.quantity) " + "FROM OrderItem oi " + "WHERE oi.order.restaurant.id = :restaurantId " + "GROUP BY oi.menuItem " + "ORDER BY SUM(oi.quantity) DESC " + "LIMIT 3")
+    List<Object[]> findTopSellingByQuantity(@Param("restaurantId") Integer restaurantId);
+
 
 
 
