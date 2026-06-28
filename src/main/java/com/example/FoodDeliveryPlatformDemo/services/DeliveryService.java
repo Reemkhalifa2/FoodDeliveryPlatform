@@ -111,6 +111,9 @@ public class DeliveryService {
         if(HelperUtils.isNull(order)) {
            throw new OrderNotFoundException();
         }
+        if(HelperUtils.isNotNull(order.getDelivery())){
+            throw new InvalidRequestException("Delivery already assigned");
+        }
 
         DeliveryDriver driver = driverRepository.getById(driverId);
 
@@ -142,8 +145,12 @@ public class DeliveryService {
 
     public DeliveryResponseDTO autoAssignDriver(Integer orderId){
         Order order = orderRepository.getById(orderId);
+
         if(HelperUtils.isNull(order)) {
             throw new OrderNotFoundException();
+        }
+        if(HelperUtils.isNotNull(order.getDelivery())){
+            throw new InvalidRequestException("Delivery already assigned");
         }
         DeliveryDriver deliveryDriver = driverRepository.findFirstOnline();
         if(HelperUtils.isNull(deliveryDriver)){

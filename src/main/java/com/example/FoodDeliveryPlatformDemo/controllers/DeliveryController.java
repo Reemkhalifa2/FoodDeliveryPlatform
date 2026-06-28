@@ -1,6 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
 import com.example.FoodDeliveryPlatformDemo.dto.response.DeliveryResponseDTO;
+import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.services.DeliveryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,7 @@ public class DeliveryController {
     @PutMapping("/{id}/complete")
     public ResponseEntity<DeliveryResponseDTO> markDeliveryDelivered(@PathVariable Integer id){
         return ResponseEntity.ok(deliveryService.markDeliveryDelivered(id));
+
     }
 
     @GetMapping("/status/{status}")

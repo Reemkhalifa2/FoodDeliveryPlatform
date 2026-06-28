@@ -2,11 +2,13 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Delivery;
 import com.example.FoodDeliveryPlatformDemo.entities.DeliveryDriver;
+import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -28,6 +30,10 @@ public interface DriverRepository extends JpaRepository<DeliveryDriver , Integer
     List<DeliveryDriver> findTopDriversByCompletedDeliveries();
 
     boolean existsByEmail(String email);
+
+
+
+
 
 
 
