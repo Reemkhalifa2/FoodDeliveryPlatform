@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,7 @@ public class CustomerRequestDTO extends PersonDTO{
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());
         customer.setPasswordHash(dto.getPassword());
+        customer.setUpdatedDate(new Date());
 
         if (HelperUtils.isNull(customer.getCustomerAddresses())) {
             customer.setCustomerAddresses(new ArrayList<>());

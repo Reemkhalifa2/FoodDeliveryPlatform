@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,7 @@ public class ComboMealRequestDTO {
         comboMeal.setComboName(dto.getComboName());
         comboMeal.setDescription(dto.getDescription());
         comboMeal.setTotalPrice(dto.getTotalPrice());
+        comboMeal.setUpdatedDate(new Date());
 
         return comboMeal;
     }

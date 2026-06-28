@@ -9,37 +9,63 @@ import org.springframework.web.context.request.WebRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(GenericException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(GenericException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND ,
-                HttpStatus.NOT_FOUND.value(),
-                "Hello",
-                ex.getMessage(),
-                request.getDescription(false).replace("uri=", ""));
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    // ─── 404 Not Found ────────────────────────────────────────────
+    @ExceptionHandler({
+            AddressNotFoundException.class,
+            CustomerNotFoundException.class,
+            MenuItemNotFoundException.class,
+            ObjectNotFoundException.class,
+            OrderNotFoundException.class,
+            OwnerNotFoundException.class,
+            ResourceNotFoundException.class,
+            RestaurantNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex, WebRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
     }
 
-    // Handles Any Unexpected System Crashes (Fallback Safety Net)
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(
-            Exception ex, WebRequest request) {
+    // ─── 400 Bad Request ──────────────────────────────────────────
+    @ExceptionHandler({
+            InvalidRequestException.class,
+            NullRequestBodyException.class,
+            InvalidLoyaltyPointsException.class
+    })
+    public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex, WebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
+    }
 
-        ErrorResponse errorDetails = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error",
-                "An unexpected error occurred on the server.",
+    // ─── 409 Conflict ─────────────────────────────────────────────
+    @ExceptionHandler({
+            InvalidOrderStateException.class,
+            InvalidPaymentStatusException.class
+    })
+    public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex, WebRequest request) {
+        return build(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
+    }
+
+    // ─── Generic fallback ─────────────────────────────────────────
+    @ExceptionHandler(GenericException.class)
+    public ResponseEntity<ErrorResponse> handleGeneric(GenericException ex, WebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Error", ex.getMessage(), request);
+    }
+
+    // ─── 500 fallback ─────────────────────────────────────────────
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobal(Exception ex, WebRequest request) {
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
+                "An unexpected error occurred on the server.", request);
+    }
+
+    // ─── Builder helper ───────────────────────────────────────────
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String error,
+                                                String message, WebRequest request) {
+        ErrorResponse body = new ErrorResponse(
+                status,
+                status.value(),
+                error,
+                message,
                 request.getDescription(false).replace("uri=", "")
         );
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+        return ResponseEntity.status(status).body(body);
     }
-
-
-
-
-
 }
-
