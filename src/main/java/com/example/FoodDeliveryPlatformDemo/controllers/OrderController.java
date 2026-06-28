@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.response.OrderHistoryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
@@ -52,7 +53,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     @GetMapping("/{id}/timeline")
-    public ResponseEntity<List<OrderStatusHistory>> orderStatusHistory(@PathVariable Integer id){
+    public ResponseEntity<List<OrderHistoryResponseDTO>> orderStatusHistory(@PathVariable Integer id){
             return ResponseEntity.ok(orderService.getTimeline(id));
     }
     @PostMapping("/customer/{customerId}/restaurant/{restaurantId}")

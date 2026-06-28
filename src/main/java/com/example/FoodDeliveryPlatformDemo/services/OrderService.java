@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
+import com.example.FoodDeliveryPlatformDemo.dto.response.OrderHistoryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.dto.request.CorporateOrderRequestDTO;
@@ -92,10 +93,10 @@ public class OrderService {
         return OrderResponseDTO.toResponse(newOrder);
     }
 
-    public List<OrderStatusHistory> getTimeline(Integer id){
+    public List<OrderHistoryResponseDTO> getTimeline(Integer id){
         Order order = orderRepository.getById(id);
         if(HelperUtils.isNull(order)) throw new OrderNotFoundException();
-        return statusHistoryRepository.findByOrderId(id);
+        return OrderHistoryResponseDTO.toResponse(statusHistoryRepository.findByOrderId(id));
     }
 
     public Page<Order> getOrders(Integer id, OrderStatus status,
