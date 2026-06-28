@@ -138,7 +138,15 @@ public class CustomerService{
         CustomerAddress customerAddress = CustomerAddressRequestDTO.toEntity(address);
         customerAddress.setIsActive(true);
         customerAddress.setCreatedDate(new Date());
+        customerAddress.setCustomer(customer);
+        if(HelperUtils.isNull(customer.getCustomerAddresses())){
+            customerAddress.setIsDefault(true);
+        }else {
+            customerAddress.setIsDefault(false);
+
+        }
         customer.getCustomerAddresses().add(customerAddress);
+        customer.setUpdatedDate(new Date());
         customerAddress.setCustomer(customer);
         customerAddress.setIsActive(true);
         customerAddressRepository.save(customerAddress);
@@ -247,6 +255,18 @@ public class CustomerService{
         if(HelperUtils.isNull(customerAddress)){
             throw new AddressNotFoundException();
         }
+        customerAddress.setIsActive(false);
+        customerAddress.setUpdatedDate(new Date());
+
+        if(customerAddress.getIsDefault()){
+            customerAddress.setIsDefault(false);
+            customerAddressRepository.save(customerAddress);
+            CustomerAddress defaultAddress = customerAddressRepository.findFirst(customerAddress.getCustomer().getId());
+            defaultAddress.setIsDefault(true);
+            defaultAddress.setUpdatedDate(new Date());
+            customerAddressRepository.save(defaultAddress);
+        }
+
         customerAddress.setIsActive(false);
         customerAddress.setUpdatedDate(new Date());
         customerAddressRepository.save(customerAddress);

@@ -2,6 +2,7 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
+import com.example.FoodDeliveryPlatformDemo.entities.DeliveryDriver;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,9 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
 
     @Query("SELECT ca FROM CustomerAddress ca WHERE ca.isActive = true AND ca.customer.id=:id AND ca.isDefault = true ")
     CustomerAddress getDefaultAddress(@Param("id") Integer id);
+
+    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.isActive = true AND ca.customer.id=:id ORDER BY ca.id ASC LIMIT 1")
+    CustomerAddress findFirst(@Param("id") Integer id);
 
 
 

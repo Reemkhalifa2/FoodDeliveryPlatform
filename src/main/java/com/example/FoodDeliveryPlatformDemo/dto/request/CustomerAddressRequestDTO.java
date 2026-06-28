@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +26,7 @@ public class CustomerAddressRequestDTO {
         customerAddress.setStreet(dto.getStreet());
         customerAddress.setCity(dto.getCity());
         customerAddress.setBuilding(dto.getBuilding());
+        customerAddress.setUpdatedDate(new Date());
         return customerAddress;
     }
 }
