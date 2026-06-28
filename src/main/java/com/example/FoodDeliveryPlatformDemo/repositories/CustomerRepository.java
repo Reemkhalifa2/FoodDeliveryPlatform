@@ -3,7 +3,6 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 import com.example.FoodDeliveryPlatformDemo.entities.Customer;
 import com.example.FoodDeliveryPlatformDemo.entities.CustomerAddress;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
-import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,8 +21,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query("SELECT c FROM Customer c WHERE c.isActive=true AND c.email=:email ")
     Customer findByEmail(@Param("email") String email);
+
     @Query("SELECT c FROM Customer c WHERE c.isActive=true AND c.id=:id ")
-    Customer findByID(@Param("id") Integer id);
+    Customer getById(@Param("id") Integer id);
 
     @Query("SELECT c from Customer c WHERE c.isActive = true AND c.loyaltyPoints=:loyaltyPoints  ")
     List<Customer>findByLoyaltyPointsGreaterThanEqual(@Param("loyaltyPoints") Integer loyaltyPoints);

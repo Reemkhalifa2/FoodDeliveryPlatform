@@ -41,6 +41,10 @@ public class DeliveryService {
 
 
 
+    public List<DeliveryDriverResponseDTO> getLeaderboard() {
+        List<DeliveryDriver> drivers = driverRepository.findTopDriversByCompletedDeliveries();
+        return DeliveryDriverResponseDTO.toResponse(drivers);
+    }
     public DeliveryDriverResponseDTO createDriver(DeliveryDriverRequestDTO dto){
         DeliveryDriver deliveryDriver = DeliveryDriverRequestDTO.toEntity(dto);
         if (driverRepository.existsByEmail(deliveryDriver.getEmail())) {
@@ -240,6 +244,7 @@ public class DeliveryService {
         }
         return DeliveryResponseDTO.toResponse(delivery);
     }
+
 
 
 

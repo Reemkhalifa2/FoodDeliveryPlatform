@@ -12,14 +12,12 @@ import com.example.FoodDeliveryPlatformDemo.exceptions.*;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerAddressRepository;
 import com.example.FoodDeliveryPlatformDemo.repositories.CustomerRepository;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.module.ResolutionException;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class CustomerService{
 
     public CustomerResponseDTO patchCustomer(Integer id, CustomerPatchDTO dto) {
 
-        Customer customer = customerRepository.findByID(id);
+        Customer customer = customerRepository.getById(id);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
@@ -133,7 +131,7 @@ public class CustomerService{
             throw new NullRequestBodyException("address request body is null");
         }
 
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
@@ -152,7 +150,7 @@ public class CustomerService{
 
 
     public CustomerResponseDTO updateLoyaltyPoints(Integer customerId, int points){
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
@@ -168,7 +166,7 @@ public class CustomerService{
     }
 
     public CustomerResponseDTO applyLoyaltyPenalty(Integer customerId, int pointsDeducted) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
@@ -187,7 +185,7 @@ public class CustomerService{
     }
 
     public String deactivateCustomer(Integer customerId){
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }
@@ -203,7 +201,7 @@ public class CustomerService{
         if(HelperUtils.isNull(id)){
             throw new InvalidRequestException("Id is null");
         }
-        Customer customer = customerRepository.findByID(id);
+        Customer customer = customerRepository.getById(id);
         if(HelperUtils.isNull(customer)){
             throw new CustomerNotFoundException();
         }

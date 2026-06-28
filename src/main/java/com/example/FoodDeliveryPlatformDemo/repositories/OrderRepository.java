@@ -38,7 +38,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.isActive = true AND o.status ='DELIVERED' AND o.restaurant.id = :id ")
     Double sumDeliveredOrders(@Param("id") Integer id);
 
-    @Query("SELECT  o FROM Order o WHERE o.isActive = true AND o.delivery.assignedAt = :date ")
+    @Query("SELECT  o FROM Order o WHERE o.isActive = true AND o.createdDate= :date ")
     List<Order> OrdersByDate(@Param("date") Date date);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.id=:id")

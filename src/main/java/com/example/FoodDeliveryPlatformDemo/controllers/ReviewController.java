@@ -23,25 +23,25 @@ public class ReviewController {
     ReviewService reviewService;
 
     @PostMapping("/restaurant/{restaurantId}/customer/{customerId}")
-    public ResponseEntity<ReviewResponseDTO> leaveRestaurantReview(@PathVariable Integer restaurantId,
-                                                  @PathVariable Integer customerId,
-                                                  @RequestParam String comment,
-                                                  @RequestParam Integer rating
-                                                  ){
-        ReviewResponseDTO response = reviewService.leaveRestaurantReview(restaurantId,customerId,rating,comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ReviewResponseDTO> leaveRestaurantReview(
+            @PathVariable Integer restaurantId,
+            @PathVariable Integer customerId,
+            @RequestParam String comment,
+            @RequestParam Integer rating) {
 
+        // you're passing restaurantId as customerId and vice versa
+        ReviewResponseDTO response = reviewService.leaveRestaurantReview(customerId, restaurantId, rating, comment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @PostMapping("/driver/{driverId}/customer/{customerId}")
+    public ResponseEntity<ReviewResponseDTO> leaveDriverReview(
+            @PathVariable Integer driverId,
+            @PathVariable Integer customerId,
+            @RequestParam String comment,
+            @RequestParam Integer rating) {
 
-    public ResponseEntity<ReviewResponseDTO> leaveDriverReview(@PathVariable Integer driverId,
-                                                                   @PathVariable Integer customerId,
-                                                                   @RequestParam String comment,
-                                                                   @RequestParam Integer rating
-    ){
-        ReviewResponseDTO response = reviewService.leaveDriverReview(driverId,customerId,rating,comment);
+        ReviewResponseDTO response = reviewService.leaveDriverReview(customerId, driverId, rating, comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
     @GetMapping("/restaurant/{restaurantId}")

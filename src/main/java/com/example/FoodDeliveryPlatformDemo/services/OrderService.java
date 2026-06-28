@@ -110,7 +110,7 @@ public class OrderService {
     }
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }
@@ -182,7 +182,7 @@ public class OrderService {
     }
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId, List<OrderItemRequestDTO> items) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }
@@ -237,7 +237,7 @@ public class OrderService {
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId,
                                         List<OrderItemRequestDTO> items, String notes) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }

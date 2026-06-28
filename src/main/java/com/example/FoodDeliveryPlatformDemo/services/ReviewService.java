@@ -42,7 +42,7 @@ public class ReviewService {
 
     public ReviewResponseDTO leaveRestaurantReview(Integer customerId, Integer restaurantId, int rating, String
             comment) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }
@@ -66,7 +66,7 @@ public class ReviewService {
 
     public ReviewResponseDTO leaveDriverReview(Integer customerId, Integer driverId, int rating, String
             comment) {
-        Customer customer = customerRepository.findByID(customerId);
+        Customer customer = customerRepository.getById(customerId);
         if (HelperUtils.isNull(customer)) {
             throw new CustomerNotFoundException();
         }

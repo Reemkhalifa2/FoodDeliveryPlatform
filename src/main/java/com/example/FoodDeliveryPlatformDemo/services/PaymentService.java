@@ -45,9 +45,9 @@ public class PaymentService {
         payment.setTransactionRef(HelperUtils.generateId("p-"));
         payment.setOrder(order);
         payment.setAmount(order.getTotalAmount());
+        paymentRepository.save(payment);
         order.setPayment(payment);
         orderRepository.save(order);
-        paymentRepository.save(payment);
         return PaymentResponseDTO.toResponse(payment);
 
     }

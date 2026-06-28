@@ -24,6 +24,9 @@ public interface DriverRepository extends JpaRepository<DeliveryDriver , Integer
     @Query("SELECT d FROM DeliveryDriver d WHERE d.isActive = true AND d.isOnline = true ORDER BY d.id ASC LIMIT 1")
     DeliveryDriver findFirstOnline();
 
+    @Query("SELECT d FROM DeliveryDriver d JOIN d.deliveries del WHERE del.status = 'DELIVERED' AND d.isActive = true GROUP BY d.id ORDER BY COUNT(del) DESC")
+    List<DeliveryDriver> findTopDriversByCompletedDeliveries();
+
     boolean existsByEmail(String email);
 
 

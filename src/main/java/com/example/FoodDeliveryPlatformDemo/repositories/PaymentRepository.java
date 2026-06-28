@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment , Integer> {
-    @Query("SELECT p FROM Payment p WHERE p.id =: id AND p.isActive = true")
+    @Query("SELECT p FROM Payment p WHERE p.id =:id AND p.isActive = true")
     Payment getById(@Param("id") Integer id);
     @Query("""
         SELECT p
