@@ -15,7 +15,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
     MenuItem getById(@Param("id") Integer id);
 
     @Query("SELECT m FROM MenuItem m WHERE m.isActive = true AND m.restaurant.id=:id")
-    MenuItem findByRestaurantId(@Param("id") Integer id);
+    List<MenuItem> findByRestaurantId(@Param("id") Integer id);
     @Query("""
 SELECT m FROM MenuItem m
 WHERE m.restaurant.id = :id

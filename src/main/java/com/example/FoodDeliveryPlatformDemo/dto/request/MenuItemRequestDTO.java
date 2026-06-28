@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +37,7 @@ public class MenuItemRequestDTO {
         menuItem.setPrice(dto.getPrice());
         menuItem.setIsVegetarian(dto.getIsVegetarian());
         menuItem.setCalories(dto.getCalories());
+        menuItem.setUpdatedDate(new Date());
         return menuItem;
     }
 
