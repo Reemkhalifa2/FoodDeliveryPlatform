@@ -43,6 +43,7 @@ public class PaymentService {
         payment.setCreatedDate(new Date());
         payment.setPaymentMethod(method);
         payment.setTransactionRef(HelperUtils.generateId("p-"));
+        payment.setStatus("PENDING");
         payment.setOrder(order);
         payment.setAmount(order.getTotalAmount());
         paymentRepository.save(payment);
@@ -53,24 +54,18 @@ public class PaymentService {
     }
 
     public PaymentResponseDTO refundPayment(Integer orderId) {
-
         Order order = orderRepository.getById(orderId);
-        if(HelperUtils.isNull(order)){
-            throw new OrderNotFoundException();
-        }
+        if (HelperUtils.isNull(order)) throw new OrderNotFoundException();
 
         Payment payment = order.getPayment();
-        if(HelperUtils.isNull(order)){
-            throw new OrderNotFoundException();
-        }
-        if (!payment.getStatus().equalsIgnoreCase("PAID")) {
-            throw new InvalidPaymentStatusException(
-                    "Only paid payments can be refunded.");
+        if (HelperUtils.isNull(payment)) throw new ObjectNotFoundException("Payment not found");
+
+        if (payment.getStatus() == null || !payment.getStatus().equalsIgnoreCase("COMPLETE")) {
+            throw new InvalidPaymentStatusException("Only paid payments can be refunded.");
         }
 
         payment.setStatus("REFUNDED");
         payment.setUpdatedDate(new Date());
-
         paymentRepository.save(payment);
         return PaymentResponseDTO.toResponse(payment);
     }
