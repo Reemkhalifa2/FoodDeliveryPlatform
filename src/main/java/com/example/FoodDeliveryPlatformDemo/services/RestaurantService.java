@@ -18,8 +18,7 @@ import org.w3c.dom.ls.LSInput;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RestaurantService {
@@ -282,6 +281,27 @@ public class RestaurantService {
         List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
         return orders.size();
 
+    }
+
+    public List<Map<String, Object>> getTopSellers(Integer restaurantId) {
+        if(HelperUtils.isNull(restaurantRepository.getById(restaurantId))){
+            throw new RestaurantNotFoundException();
+        }
+
+        List<Object[]> results = menuItemRepository.findTopSellingByQuantity(restaurantId);
+        List<Map<String, Object>> topSellers = new ArrayList<>();
+        int rank = 1;
+        for (Object[] row : results) {
+            MenuItem item      = (MenuItem) row[0];  // oi.menuItem
+            Long totalQuantity = (Long)     row[1];  // SUM(oi.quantity)
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("rank",              rank++);
+            map.put("menuItemId",        item.getId());
+            map.put("totalQuantitySold", totalQuantity);
+            topSellers.add(map);
+        }
+
+        return topSellers;
     }
 
 

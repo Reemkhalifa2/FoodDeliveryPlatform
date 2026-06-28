@@ -45,6 +45,7 @@ public class RestaurantRequestDTO {
         restaurant.setMinOrderAmount(dto.getMinOrderAmount());
         restaurant.setDeliveryFee(dto.getDeliveryFee());
         restaurant.setUpdatedDate(new Date());
+        restaurant.setAcceptingOrders(true);
         return restaurant;
     }
 

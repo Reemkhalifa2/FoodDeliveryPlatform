@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("restaurants")
@@ -25,6 +26,14 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
     RestaurantService restaurantService;
+
+    @GetMapping("/{id}/menu/top-sellers")
+    public ResponseEntity<?> getTopSellers(
+            @PathVariable Integer id
+    ) {
+        List<Map<String, Object>> topSellers = restaurantService.getTopSellers(id);
+        return ResponseEntity.ok(topSellers);
+    }
 
     @GetMapping("/{id}/analytics")
     public ResponseEntity<String> analytics(
