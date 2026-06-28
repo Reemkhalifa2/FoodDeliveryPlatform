@@ -18,9 +18,7 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Boolean isActive;
-    @CreationTimestamp
     private Date createdDate;
-    @UpdateTimestamp
     private Date updatedDate;
 
 }
