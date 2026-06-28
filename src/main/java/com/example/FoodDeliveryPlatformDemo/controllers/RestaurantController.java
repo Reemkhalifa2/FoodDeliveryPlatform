@@ -92,6 +92,11 @@ public class RestaurantController {
         );
     }
 
+    @PostMapping("/{id}/menu")
+    public ResponseEntity<MenuItemResponseDTO> addMenuItem(@PathVariable Integer id , @Valid @RequestBody MenuItemRequestDTO dto){
+        return ResponseEntity.ok(restaurantService.addMenuItem(id, dto));
+    }
+
     @GetMapping("/{id}/menu")
     public ResponseEntity<List<MenuItemResponseDTO>> getMenuForRestaurant(@PathVariable Integer id ){
         return ResponseEntity.ok(restaurantService.getMenuForRestaurant(id));
@@ -102,10 +107,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getAllComboMeal(id));
     }
 
-    @PostMapping("/{id}/menu")
-    public ResponseEntity<MenuItemResponseDTO> addMenuItem(@PathVariable Integer id , @Valid @RequestBody MenuItemRequestDTO dto){
-        return ResponseEntity.ok(restaurantService.addMenuItem(id, dto));
-    }
+
 
     @PutMapping("/menu/{itemId}/available")
     public ResponseEntity<MenuItemResponseDTO> updateAvailability(

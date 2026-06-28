@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
 import java.util.Date;
 
 @Data
@@ -19,9 +20,9 @@ public class RestaurantRequestDTO {
     @NotBlank
     private String cuisineType;
     @NotNull
-    private Date openingTime;
+    private Time openingTime;
     @NotNull
-    private Date closingTime;
+    private Time closingTime;
     @NotNull
     @Min(value = 0)
     private Integer minOrderAmount;
@@ -29,6 +30,10 @@ public class RestaurantRequestDTO {
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "0.8")
     private Double deliveryFee;
+    @NotNull
+    private Double latitude;
+    @NotNull
+    private Double longitude;
 
     public static Restaurant toEntity(RestaurantRequestDTO dto) {
         Restaurant restaurant = new Restaurant();
@@ -39,6 +44,7 @@ public class RestaurantRequestDTO {
         restaurant.setClosingTime(dto.getClosingTime());
         restaurant.setMinOrderAmount(dto.getMinOrderAmount());
         restaurant.setDeliveryFee(dto.getDeliveryFee());
+        restaurant.setUpdatedDate(new Date());
         return restaurant;
     }
 

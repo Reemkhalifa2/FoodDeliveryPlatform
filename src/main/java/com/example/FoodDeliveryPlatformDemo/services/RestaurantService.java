@@ -4,10 +4,7 @@ import com.example.FoodDeliveryPlatformDemo.dto.request.ComboMealRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.MenuItemRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.RestaurantOwnerRequestDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.request.RestaurantRequestDTO;
-import com.example.FoodDeliveryPlatformDemo.dto.response.ComboMealResponseDTO;
-import com.example.FoodDeliveryPlatformDemo.dto.response.MenuItemResponseDTO;
-import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantOwnerResponseDTO;
-import com.example.FoodDeliveryPlatformDemo.dto.response.RestaurantResponseDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.response.*;
 import com.example.FoodDeliveryPlatformDemo.entities.*;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.exceptions.*;
@@ -157,7 +154,7 @@ public class RestaurantService {
     }
 
     public List<MenuItemResponseDTO> getMenuForRestaurant(Integer restaurantId) {
-        return MenuItemResponseDTO.toResponse(restaurantRepository.findMenuByRestaurantId(restaurantId));
+        return MenuItemResponseDTO.toResponse(menuItemRepository.findByRestaurantId(restaurantId));
     }
 
     public List<ComboMealResponseDTO> getAllComboMeal(Integer restaurantId) {
@@ -279,16 +276,13 @@ public class RestaurantService {
 
     }
     public Integer totalLifetimeOrders(Integer restaurantId){
-        Restaurant restaurant = restaurantRepository.getById(restaurantId);
-        if(HelperUtils.isNull(restaurantId)){
+        if(HelperUtils.isNull(restaurantRepository.getById(restaurantId))){
             throw new RestaurantNotFoundException();
         }
         List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
         return orders.size();
 
     }
-
-
 
 
 

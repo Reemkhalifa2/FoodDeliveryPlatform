@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class RestaurantOwnerRequestDTO extends PersonDTO {
         restaurantOwner.setPhone(dto.getPhone());
         restaurantOwner.setPasswordHash(dto.getPassword());
         restaurantOwner.setBusinessLicenseCode(dto.getBusinessLicenseCode());
+        restaurantOwner.setUpdatedDate(new Date());
         return restaurantOwner;
     }
 
