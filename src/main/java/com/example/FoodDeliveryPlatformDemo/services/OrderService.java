@@ -51,6 +51,9 @@ public class OrderService {
 
     public OrderResponseDTO reorder(Integer id) {
         Order oldOrder = orderRepository.getById(id);
+        if (!(oldOrder.getRestaurant().getAcceptingOrders())) {
+            throw new InvalidRequestException("Restaurant is currently not accepting orders.");
+        }
         if(HelperUtils.isNull(oldOrder)) throw new OrderNotFoundException();
 
         Order newOrder = new Order();
@@ -117,6 +120,9 @@ public class OrderService {
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
         if (HelperUtils.isNull(restaurant)) {
             throw new RestaurantNotFoundException();
+        }
+        if (!(restaurant.getAcceptingOrders())) {
+            throw new InvalidRequestException("Restaurant is currently not accepting orders.");
         }
         Order order = new Order();
         order.setCustomer(customer);
@@ -190,7 +196,9 @@ public class OrderService {
         if (HelperUtils.isNull(restaurant)) {
             throw new RestaurantNotFoundException();
         }
-
+        if (!(restaurant.getAcceptingOrders())) {
+            throw new InvalidRequestException("Restaurant is currently not accepting orders.");
+        }
         Order order = new Order();
         order.setCustomer(customer);
         order.setRestaurant(restaurant);
@@ -244,6 +252,9 @@ public class OrderService {
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
         if (HelperUtils.isNull(restaurant)) {
             throw new RestaurantNotFoundException();
+        }
+        if (!(restaurant.getAcceptingOrders())) {
+            throw new InvalidRequestException("Restaurant is currently not accepting orders.");
         }
 
         Order order = new Order();
@@ -426,14 +437,18 @@ public class OrderService {
 
     public CorporateOrderResponseDTO placeCorporateOrder(CorporateOrderRequestDTO dto) {
         CorporateOrder corporateOrder = CorporateOrderRequestDTO.toEntity(dto);
-        if(HelperUtils.isNull(corporateOrder)){
-            throw new OrderNotFoundException();
-        }
-        List<OrderItem> orderItems = corporateOrder.getItems();
-        orderItemRepository.saveAll(orderItems);
+        if (HelperUtils.isNull(corporateOrder)) throw new OrderNotFoundException();
+
         corporateOrder.setIsActive(true);
         corporateOrder.setCreatedDate(new Date());
         corporateOrderRepository.save(corporateOrder);
+
+        List<OrderItem> orderItems = corporateOrder.getItems();
+        if (HelperUtils.isNotNull(orderItems)) {
+            orderItems.forEach(item -> item.setCorporateOrder(corporateOrder));
+            orderItemRepository.saveAll(orderItems);
+        }
+
         return CorporateOrderResponseDTO.toResponse(corporateOrder);
     }
 
