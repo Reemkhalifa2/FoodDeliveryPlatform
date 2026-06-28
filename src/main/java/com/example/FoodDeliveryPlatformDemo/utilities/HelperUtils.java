@@ -110,11 +110,14 @@ public class HelperUtils {
                 amount,
                 currencyCode.toUpperCase());
     }
-    public static Integer subtract(Integer a , Integer b){{
+    public static Integer subtract(Integer a , Integer b){
+        return a  - b;
+    }
+    public static Double subtract(Double a , Double b){
         return a  - b;
     }
 
-    }
+
 
     // Check if current time is within business hours
     public static boolean isBusinessOpen(String openTime,
