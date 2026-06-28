@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +30,8 @@ public class OrderRequestDTO {
         Order order = new Order();
         order.getCustomer().setId(dto.getCustomerId());
         order.getRestaurant().setId(dto.getRestaurantId());
-
+        order.setUpdatedDate(new Date());
+        order.setOrderDate(LocalDate.now());
         if (HelperUtils.isNotNull(dto.getItems())) {
             List<OrderItem> orderItems = new ArrayList<>();
 

@@ -357,9 +357,9 @@ public class OrderService {
         double deductedAmount = HelperUtils.deductedAmount(orderItem.getUnitPrice(), orderItem.getQuantity());
         order.getOrderItems().remove(orderItem);
 
-        double newSubtotal = (order.getSubtotal() != null ? order.getSubtotal() : 0.0) - deductedAmount;
+        double newSubtotal = HelperUtils.subtract(order.getSubtotal(),deductedAmount);
         order.setSubtotal(newSubtotal);
-        order.setTotalAmount(HelperUtils.calculateTotal(newSubtotal, order.getDeliveryFee()));
+        order.setTotalAmount(HelperUtils.subtract(order.getTotalAmount(), deductedAmount));
 
         order.setUpdatedDate(new Date());
 
@@ -378,6 +378,9 @@ public class OrderService {
         }
         if(discountAmount>order.getTotalAmount()){
             order.setTotalAmount(0.0);
+        }
+        if(order.getDeliveryFee()==null){
+            throw new ResourceNotFoundException("no delivery assigned");
         }
         Double totalAmount = HelperUtils.calculateTotal(order.getTotalAmount(), order.getDeliveryFee(), discountAmount);
         order.setDiscountAmount(order.getTotalAmount() -totalAmount);

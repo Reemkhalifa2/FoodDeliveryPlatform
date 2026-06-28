@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +26,9 @@ public class OrderItemRequestDTO {
         MenuItem menuItem = new MenuItem();
         menuItem.setId(dto.getMenuItemId());
         orderItem.setMenuItem(menuItem);
+        orderItem.setUnitPrice(menuItem.getPrice());
         orderItem.setQuantity(dto.getQuantity());
+        orderItem.setUpdatedDate(new Date());
         orderItem.setSpecialInstructions(dto.getSpecialInstructions());
 
         return orderItem;
