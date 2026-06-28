@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends BaseEntity{
     private String orderCode;
-    private Date orderDate;
+    private LocalDate orderDate;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private Double subtotal;

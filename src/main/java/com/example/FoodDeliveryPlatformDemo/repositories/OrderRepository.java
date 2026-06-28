@@ -45,16 +45,31 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     Order getById(@Param("id") Integer id);
 
     @Query("""
-        SELECT o FROM Order o
-        WHERE o.customer.Id = :id
-          AND o.status = :status
-          AND  o.createdDate BETWEEN :fromDate AND :toDate
-    """)
+            SELECT o
+            FROM Order o
+            WHERE o.customer.id = :id
+            AND (:status IS NULL OR o.status = :status)
+            AND (:fromDate IS NULL OR o.createdDate >= :fromDate)
+            AND (:toDate IS NULL OR o.createdDate <= :toDate)
+            """)
     Page<Order> findByFilters(
-            @Param("id")       Integer    id,
+            @Param("id") Integer id,
             @Param("status") OrderStatus status,
             @Param("fromDate") Date fromDate,
-            @Param("toDate")   Date toDate,
+            @Param("toDate") Date toDate,
+            Pageable pageable
+    );
+    @Query("""
+            SELECT o
+            FROM Order o
+            WHERE (:status IS NULL OR o.status = :status)
+            AND (:fromDate IS NULL OR o.createdDate >= :fromDate)
+            AND (:toDate IS NULL OR o.createdDate <= :toDate)
+            """)
+    Page<Order> findByFilters(
+            @Param("status") OrderStatus status,
+            @Param("fromDate") Date fromDate,
+            @Param("toDate") Date toDate,
             Pageable pageable
     );
 

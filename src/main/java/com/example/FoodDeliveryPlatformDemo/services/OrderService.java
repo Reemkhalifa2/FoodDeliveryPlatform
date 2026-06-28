@@ -98,8 +98,7 @@ public class OrderService {
         if(HelperUtils.isNull(order)) throw new OrderNotFoundException();
         return OrderHistoryResponseDTO.toResponse(statusHistoryRepository.findByOrderId(id));
     }
-
-    public Page<Order> getOrders(Integer id, OrderStatus status,
+    public Page<Order> getOrders(Integer id,OrderStatus status,
                                  String from, String to,
                                  int page, int size) {
 
@@ -110,7 +109,21 @@ public class OrderService {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        return orderRepository.findByFilters(id, status, fromDate, toDate, pageable);
+        return orderRepository.findByFilters(id,status, fromDate, toDate, pageable);
+    }
+
+    public Page<Order> getOrders(OrderStatus status,
+                                 String from, String to,
+                                 int page, int size) {
+
+        Date fromDate = HelperUtils.startOfDay(HelperUtils.parse(from));
+        Date toDate   = HelperUtils.endOfDay(HelperUtils.parse(to));
+        if (!HelperUtils.isValidRange(fromDate, toDate)) {
+            throw new IllegalArgumentException("'from' date must be before 'to' date");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findByFilters(status, fromDate, toDate, pageable);
     }
 
     public OrderResponseDTO createOrder(Integer customerId, Integer restaurantId) {

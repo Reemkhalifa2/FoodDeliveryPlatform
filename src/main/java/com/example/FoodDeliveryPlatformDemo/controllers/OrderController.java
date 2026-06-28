@@ -26,24 +26,15 @@ public class OrderController {
     }
     OrderService orderService;
 
-
     @GetMapping("/customer/{customerId}")
     public Page<Order> getCustomerOrders(
-            @PathVariable Integer customerId,
             @RequestParam(required = false) OrderStatus status,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-
-        return orderService.getOrders(
-                customerId,
-                status,
-                from,
-                to,
-                page,
-                size
+        return orderService.getOrders(status, from, to, page, size
         );
     }
 
