@@ -39,12 +39,11 @@ public class ReportingController {
     @GetMapping("/revenue/restaurant/{restaurantId}")
     public ResponseEntity<String> getRestaurantRevenue(
             @PathVariable Integer restaurantId,
-            @RequestParam Date date) {
-
-        return ResponseEntity.ok(
-                restaurantService.getRestaurantRevenue(restaurantId, date)
-        );
+            @RequestParam String date
+    ) {
+        return ResponseEntity.ok(restaurantService.getRestaurantRevenue(restaurantId, date));
     }
+
     @GetMapping("/orders/count/restaurant/{restaurantId}")
     public ResponseEntity<Integer> totalLifetimeOrders(@PathVariable Integer restaurantId){
         return ResponseEntity.ok(restaurantService.totalLifetimeOrders(restaurantId));
@@ -60,9 +59,35 @@ public class ReportingController {
     }
 
     @GetMapping("/platform/daily-summary")
-    public ResponseEntity<String> totalLifetimeOrders(@RequestParam Date date){
+    public ResponseEntity<String> totalLifetimeOrders(@RequestParam String date){
         return ResponseEntity.ok(orderService.dailySummary(date));
     }
+
+    @GetMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<String> getRestaurantRevenue(
+            @PathVariable Integer restaurantId,
+            @RequestParam String from,
+            @RequestParam String to
+    ) {
+        return ResponseEntity.ok(restaurantService.getRestaurantRevenue(restaurantId, from, to));
+    }
+
+    @GetMapping("/drivers/{driverId}/earnings")
+    public ResponseEntity<String> getDriverEarnings(
+            @PathVariable Integer driverId,
+            @RequestParam String from,
+            @RequestParam String to
+    ) {
+        return ResponseEntity.ok(deliveryService.getDriverEarnings(driverId, from, to));
+    }
+    @GetMapping("/orders/cancellation-rate")
+    public ResponseEntity<String> getCancellationRate(
+            @RequestParam String from,
+            @RequestParam String to
+    ) {
+        return ResponseEntity.ok(orderService.getCancellationRate(from, to));
+    }
+
 
 
 

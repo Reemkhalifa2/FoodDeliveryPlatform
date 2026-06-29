@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -253,27 +255,36 @@ public class RestaurantService {
         return MenuItemResponseDTO.toResponse(menuItems);
     }
 
-    public String getRestaurantRevenue(Integer restaurantId, Date date){
+    public String getRestaurantRevenue(Integer restaurantId, String dateStr) {
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
 
         if (HelperUtils.isNull(restaurant)) {
             throw new RestaurantNotFoundException();
         }
 
+        Date date;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            date = sdf.parse(dateStr);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd (e.g. 2026-06-27)");
+        }
+
         Date nextDay = Date.from(
                 date.toInstant().plus(1, ChronoUnit.DAYS)
         );
-        List<Order> orders = orderRepository.findByOrderDateBetween(restaurantId,date,nextDay);
+
+        List<Order> orders = orderRepository.findByOrderDateBetween(restaurantId, date, nextDay);
         Double revenue = 0.0;
-        for(Order order : orders){
-            if(order.getStatus() == OrderStatus.DELIVERED){
+        for (Order order : orders) {
+            if (order.getStatus() == OrderStatus.DELIVERED) {
                 revenue += order.getTotalAmount();
             }
         }
 
-        return "Total revenue for restaurant : "+restaurantId + " in date: " + date + ": "+HelperUtils.formatCurrency(revenue, "OMR");
-
+        return "Total revenue for restaurant: " + restaurantId + " on date: " + dateStr + ": " + HelperUtils.formatCurrency(revenue, "OMR");
     }
+
     public Integer totalLifetimeOrders(Integer restaurantId){
         if(HelperUtils.isNull(restaurantRepository.getById(restaurantId))){
             throw new RestaurantNotFoundException();
@@ -303,6 +314,35 @@ public class RestaurantService {
 
         return topSellers;
     }
+
+
+    public String getRestaurantRevenue(Integer restaurantId, String from, String to) {
+        Restaurant restaurant = restaurantRepository.getById(restaurantId);
+        if (HelperUtils.isNull(restaurant)) throw new RestaurantNotFoundException();
+
+        Date fromDate = HelperUtils.parseDate(from);
+        Date toDate   = HelperUtils.parseDate(to);
+
+        List<Order> orders = orderRepository.findByFilters(
+                restaurantId, fromDate, toDate);
+
+        Double totalRevenue = orders.stream()
+                .mapToDouble(Order::getTotalAmount)
+                .sum();
+
+        Double totalFees = orders.stream()
+                .mapToDouble(Order::getDeliveryFee)
+                .sum();
+
+        return "Restaurant Revenue Report\n"
+                + "Restaurant: " + restaurant.getName() + "\n"
+                + "Period: " + from + " to " + to + "\n"
+                + "Total Orders: " + orders.size() + "\n"
+                + "Total Revenue: " + HelperUtils.formatCurrency(totalRevenue, "OMR") + "\n"
+                + "Total Delivery Fees: " + HelperUtils.formatCurrency(totalFees, "OMR") + "\n"
+                + "Net Revenue: " + HelperUtils.formatCurrency(totalRevenue - totalFees, "OMR");
+    }
+
 
 
 

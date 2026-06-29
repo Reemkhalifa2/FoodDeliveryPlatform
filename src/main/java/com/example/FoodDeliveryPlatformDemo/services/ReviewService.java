@@ -88,10 +88,12 @@ public class ReviewService {
     }
 
     public List<ReviewResponseDTO> getRestaurantReviews(Integer restaurantId) {
+        if(HelperUtils.isNull(restaurantRepository.getById(restaurantId)))throw new RestaurantNotFoundException();
         return ReviewResponseDTO.toResponse(reviewRepository.findByRestaurantId(restaurantId));
     }
 
     public List<ReviewResponseDTO> getDriverReviews(Integer driverId) {
+        if(HelperUtils.isNull(restaurantRepository.getById(driverId)))throw new ObjectNotFoundException("Driver Not Found");
         return ReviewResponseDTO.toResponse(reviewRepository.findByDriverId(driverId));
     }
 
@@ -124,5 +126,21 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(page, size);
         return reviewRepository.findByRestaurantId(id, pageable);
     }
+
+    public Double restaurantAverageRating(Integer restaurantId){
+        if (HelperUtils.isNull(restaurantRepository.getById(restaurantId))) {
+            throw new RestaurantNotFoundException();
+        }
+        return reviewRepository.restaurantAverageRating(restaurantId);
+    }
+
+    public Double driverAverageRating(Integer driverId){
+        if (HelperUtils.isNull(driverRepository.getById(driverId))) {
+            throw new ObjectNotFoundException("Driver not found");
+        }
+        return reviewRepository.restaurantAverageRating(driverId);
+    }
+
+
 
 }

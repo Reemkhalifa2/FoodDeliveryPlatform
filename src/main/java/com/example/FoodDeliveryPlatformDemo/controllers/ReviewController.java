@@ -1,10 +1,11 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
 import com.example.FoodDeliveryPlatformDemo.dto.response.ReviewResponseDTO;
-import com.example.FoodDeliveryPlatformDemo.repositories.ReviewRepository;
+import com.example.FoodDeliveryPlatformDemo.entities.Review;
 import com.example.FoodDeliveryPlatformDemo.services.ReviewService;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,28 @@ public class ReviewController {
     public ResponseEntity<ReviewResponseDTO> deleteReview(@PathVariable Integer reviewId){
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(reviewService.deleteReview(reviewId));
+    }
+    @GetMapping("/page/restaurant/{restaurantId}")
+    public Page<Review> findByRestaurantId(
+            @PathVariable Integer restaurantId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
+
+        return reviewService.findByRestaurantId(
+                restaurantId,
+                page,
+                size
+        );
+    }
+
+    @GetMapping("restaurant/{restaurantId}/average")
+    public ResponseEntity<Double> restaurantAverageRating(@PathVariable Integer restaurantId){
+        return ResponseEntity.ok(reviewService.restaurantAverageRating(restaurantId));
+    }
+
+    @GetMapping("/driver/{driverId}/average")
+    public ResponseEntity<Double> driverAverageRating(@PathVariable Integer driverId){
+        return ResponseEntity.ok(reviewService.driverAverageRating(driverId));
     }
 
 }
