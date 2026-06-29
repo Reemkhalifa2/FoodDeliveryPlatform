@@ -31,14 +31,13 @@ public class PaymentController {
     }
     @GetMapping
     public Page<Payment> getPayment(
-            @RequestParam String paymentMethod,
-            @RequestParam String status,
-            @RequestParam String from,
-            @RequestParam String to,
-            @RequestParam Integer page,
-            @RequestParam Integer size
+            @RequestParam(required = false) String paymentMethod,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size
     ) {
-
         return paymentService.getPayments(
                 paymentMethod,
                 status,
@@ -64,6 +63,11 @@ public class PaymentController {
     @PutMapping("/{paymentId}/refund")
     public ResponseEntity<PaymentResponseDTO> refundPayment(@PathVariable Integer paymentId){
         return ResponseEntity.ok(paymentService.refundPayment(paymentId));
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<PaymentResponseDTO> getByOrderId(@PathVariable Integer orderId){
+        return ResponseEntity.ok(paymentService.getPaymentByOrderId(orderId));
     }
 
 }

@@ -33,6 +33,7 @@ public class PaymentService {
     PaymentRepository paymentRepository;
     OrderRepository orderRepository;
 
+
     public PaymentResponseDTO  processPayment(Integer orderId, String method) {
         Order order = orderRepository.getById(orderId);
         if(HelperUtils.isNull(order)){
@@ -52,6 +53,7 @@ public class PaymentService {
         return PaymentResponseDTO.toResponse(payment);
 
     }
+
 
     public PaymentResponseDTO refundPayment(Integer orderId) {
         Order order = orderRepository.getById(orderId);
@@ -110,6 +112,14 @@ public class PaymentService {
         }
 
         return response;
+    }
+
+    public PaymentResponseDTO getPaymentByOrderId(Integer orderId){
+        Payment payment = paymentRepository.getByOrderId(orderId);
+        if(HelperUtils.isNull(payment)){
+            throw new ObjectNotFoundException("Payment Not Found");
+        }
+        return PaymentResponseDTO.toResponse(payment);
     }
 
 

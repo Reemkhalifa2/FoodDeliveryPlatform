@@ -16,15 +16,14 @@ public interface PaymentRepository extends JpaRepository<Payment , Integer> {
     @Query("SELECT p FROM Payment p WHERE p.id =:id AND p.isActive = true")
     Payment getById(@Param("id") Integer id);
     @Query("""
-        SELECT p
-        FROM Payment p
-        WHERE 
-        p.isActive=true
-        AND p.paymentMethod = :paymentMethod
-        AND p.status = :status
-        AND p.createdDate >= :from
-        AND p.createdDate <= :to
-    """)
+    SELECT p
+    FROM Payment p
+    WHERE p.isActive = true
+    AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)
+    AND (:status IS NULL OR p.status = :status)
+    AND (:from IS NULL OR p.createdDate >= :from)
+    AND (:to IS NULL OR p.createdDate <= :to)
+""")
     Page<Payment> filterPayments(
             @Param("paymentMethod") String paymentMethod,
             @Param("status") String status,
@@ -38,6 +37,9 @@ public interface PaymentRepository extends JpaRepository<Payment , Integer> {
     GROUP BY p.paymentMethod
 """)
     List<Object[]> getTotalAmountGroupedByMethod();
+
+    @Query("SELECT p FROM Payment p WHERE p.isActive = true AND p.order.id=:orderId")
+    Payment getByOrderId(@Param("orderId") Integer orderId);
 
 
 
