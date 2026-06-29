@@ -12,6 +12,14 @@ import java.util.*;
 public class HelperUtils {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static Date parseDate(String dateStr) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.parse(dateStr);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd");
+        }
+    }
     // Parse String → Date
     public static Date parse(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) return null;
