@@ -31,6 +31,21 @@ public interface DriverRepository extends JpaRepository<DeliveryDriver , Integer
 
     boolean existsByEmail(String email);
 
+    @Query("""
+        SELECT d FROM DeliveryDriver d
+        WHERE d.isOnline = true
+          AND (6371 * acos(
+                cos(radians(:lat)) * cos(radians(d.currentLat)) *
+                cos(radians(d.currentLng) - radians(:lng)) +
+                sin(radians(:lat)) * sin(radians(d.currentLat))
+              )) <= :radiusKm
+        """)
+    List<DeliveryDriver> findNearbyOnlineDrivers(
+            @Param("lat") Double lat,
+            @Param("lng") Double lng,
+            @Param("radiusKm") Double radiusKm
+    );
+
 
 
 

@@ -1,6 +1,8 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
 import com.example.FoodDeliveryPlatformDemo.dto.request.DeliveryDriverRequestDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.request.DriverPerformanceDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.request.NearbyDriverDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.DeliveryDriverResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.DeliveryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.Delivery;
@@ -11,15 +13,13 @@ import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.exceptions.InvalidRequestException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.ObjectNotFoundException;
 import com.example.FoodDeliveryPlatformDemo.exceptions.OrderNotFoundException;
-import com.example.FoodDeliveryPlatformDemo.repositories.DeliveryRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.DriverRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.OrderRepository;
-import com.example.FoodDeliveryPlatformDemo.repositories.StatusHistoryRepository;
+import com.example.FoodDeliveryPlatformDemo.repositories.*;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeliveryService {
@@ -28,18 +28,19 @@ public class DeliveryService {
 
     public DeliveryService(StatusHistoryRepository statusHistoryRepository,
                            DeliveryRepository deliveryRepository,
-                           DriverRepository driverRepository,OrderRepository orderRepository) {
+                           DriverRepository driverRepository,OrderRepository orderRepository,
+                           ReviewRepository reviewRepository) {
         this.deliveryRepository = deliveryRepository;
         this.driverRepository = driverRepository;
         this.orderRepository = orderRepository;
         this.statusHistoryRepository = statusHistoryRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     DeliveryRepository deliveryRepository;
     OrderRepository orderRepository;
     StatusHistoryRepository statusHistoryRepository;
-
-
+    ReviewRepository reviewRepository;
 
     public List<DeliveryDriverResponseDTO> getLeaderboard() {
         List<DeliveryDriver> drivers = driverRepository.findTopDriversByCompletedDeliveries();
@@ -252,12 +253,68 @@ public class DeliveryService {
         return DeliveryResponseDTO.toResponse(delivery);
     }
 
+    public List<NearbyDriverDTO> getNearbyDrivers(Double lat, Double lng, Double radiusKm) {
 
+        return driverRepository.findNearbyOnlineDrivers(lat, lng, radiusKm)
+                .stream()
+                .map(d -> new NearbyDriverDTO(
+                        d.getId(),
+                        d.getDriverCode(),
+                        d.getVehicleType(),
+                        d.getVehiclePlate(),
+                        d.getCurrentLat(),
+                        d.getCurrentLng()
+                ))
+                .toList();
+    }
 
+    public DriverPerformanceDTO getDriverPerformance(Integer driverId) {
+        if (HelperUtils.isNull(driverRepository.getById(driverId))) {
+            throw new ObjectNotFoundException("Driver not found: " + driverId);
+        }
 
+        Object[] stats = deliveryRepository.getDriverPerformanceStats(driverId);
 
+        Integer completedCount = stats[0] != null ? ((Number) stats[0]).intValue() : 0;
+        Double avgMinutes = stats[1] != null ? ((Number) stats[1]).doubleValue() : 0.0;
 
+        return new DriverPerformanceDTO(driverId, completedCount, avgMinutes);
+    }
 
+    public String getDriverEarnings(Integer driverId, String from, String to) {
+        DeliveryDriver driver = driverRepository.getById(driverId);
+        if (HelperUtils.isNull(driver)) throw new ObjectNotFoundException("Driver not Found");
+
+        Date fromDate = HelperUtils.parseDate(from);
+        Date toDate   = HelperUtils.parseDate(to);
+
+        List<Delivery> deliveries = deliveryRepository.findDeliveriesByDriverAndDateRange(
+                driverId, fromDate, toDate);
+
+        Double totalEarnings = deliveries.stream()
+                .mapToDouble(d -> d.getOrder().getDeliveryFee())
+                .sum();
+
+        long avgMinutes = 0;
+        List<Delivery> timed = deliveries.stream()
+                .filter(d -> HelperUtils.isNotNull(d.getPickedUpAt())
+                        && HelperUtils.isNotNull(d.getDeliveredAt()))
+                .toList();
+
+        if (!timed.isEmpty()) {
+            avgMinutes = (long) timed.stream()
+                    .mapToLong(d -> d.getDeliveredAt().getTime() - d.getPickedUpAt().getTime())
+                    .average()
+                    .orElse(0) / 60000;
+        }
+
+        return "Driver Earnings Report\n"
+                + "Driver: " + driver.getDriverCode() + "\n"
+                + "Period: " + from + " to " + to + "\n"
+                + "Total Deliveries: " + deliveries.size() + "\n"
+                + "Total Earnings: " + HelperUtils.formatCurrency(totalEarnings, "OMR") + "\n"
+                + "Average Delivery Time: " + avgMinutes + " min";
+    }
 
 
 

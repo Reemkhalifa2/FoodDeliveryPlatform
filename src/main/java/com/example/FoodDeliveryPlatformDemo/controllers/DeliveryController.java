@@ -1,5 +1,7 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.request.DriverPerformanceDTO;
+import com.example.FoodDeliveryPlatformDemo.dto.request.NearbyDriverDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.DeliveryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import com.example.FoodDeliveryPlatformDemo.services.DeliveryService;
@@ -50,6 +52,22 @@ public class DeliveryController {
     @GetMapping("/status/{status}")
     public ResponseEntity<List<DeliveryResponseDTO>> getDeliveries(@PathVariable String status){
         return ResponseEntity.ok(deliveryService.getDeliveries(status));
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<NearbyDriverDTO>> getNearbyDrivers(
+            @RequestParam Double lat,
+            @RequestParam Double lng,
+            @RequestParam(defaultValue = "5.0") Double radiusKm
+    ) {
+        return ResponseEntity.ok(deliveryService.getNearbyDrivers(lat, lng, radiusKm));
+    }
+
+    @GetMapping("/{driverId}/performance")
+    public ResponseEntity<DriverPerformanceDTO> getDriverPerformance(
+            @PathVariable Integer driverId
+    ) {
+        return ResponseEntity.ok(deliveryService.getDriverPerformance(driverId));
     }
 
 

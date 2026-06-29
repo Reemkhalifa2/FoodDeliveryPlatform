@@ -23,4 +23,30 @@ public interface DeliveryRepository extends JpaRepository<Delivery , Integer> {
     List<Delivery> getDeliveries(@Param("driverId") Integer driverId, @Param("status") String status);
     @Query("SELECT d FROM Delivery d WHERE  d.status = :status AND d.isActive = true")
     List<Delivery> getDeliveries(@Param("status") String status);
+
+
+    @Query(value = """
+            SELECT COUNT(*) AS completedCount,
+            AVG(TIMESTAMPDIFF(SECOND, d.picked_up_at, d.delivered_at)) / 60.0 AS avgMinutes
+            FROM delivery d
+            WHERE d.delivery_driver_id = :driverId
+            AND d.status = 'DELIVERED'
+            AND d.delivered_at IS NOT NULL
+            AND d.picked_up_at IS NOT NULL
+            """, nativeQuery = true)
+    Object[] getDriverPerformanceStats(@Param("driverId") Integer driverId);
+
+    @Query("""
+    SELECT d FROM Delivery d
+    WHERE d.isActive = true
+    AND d.deliveryDriver.id = :driverId
+    AND d.status = 'DELIVERED'
+    AND d.deliveredAt >= :from
+    AND d.deliveredAt < :to
+""")
+    List<Delivery> findDeliveriesByDriverAndDateRange(
+            @Param("driverId") Integer driverId,
+            @Param("from") Date from,
+            @Param("to") Date to
+    );
 }
