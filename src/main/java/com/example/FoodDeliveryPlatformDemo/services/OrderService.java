@@ -17,6 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +60,9 @@ public class OrderService {
         }
         if(HelperUtils.isNull(oldOrder)) throw new OrderNotFoundException();
 
+        if(oldOrder.getStatus()!=OrderStatus.DELIVERED){
+            throw new InvalidRequestException("Bad Request");
+        }
         Order newOrder = new Order();
         newOrder.setCustomer(oldOrder.getCustomer());
         newOrder.setStatus(OrderStatus.PENDING);
@@ -160,6 +166,9 @@ public class OrderService {
         Order order = orderRepository.getById(orderId);
         if (HelperUtils.isNull(order)) {
             throw new OrderNotFoundException();
+        }
+        if(order.getStatus() != OrderStatus.CREATED || order.getStatus() != OrderStatus.PENDING){
+            throw new InvalidRequestException("You cant add items.");
         }
 
         Double subTotal = order.getSubtotal() != null ? order.getSubtotal() : 0.0;
@@ -380,7 +389,10 @@ public class OrderService {
             order.setTotalAmount(0.0);
         }
         if(order.getDeliveryFee()==null){
-            throw new ResourceNotFoundException("no delivery assigned");
+            order.setDeliveryFee(0.0);
+        }
+        if(order.getStatus() != OrderStatus.CONFIRMED){
+            throw new InvalidRequestException("Only confirmed orders.");
         }
         Double totalAmount = HelperUtils.calculateTotal(order.getTotalAmount(), order.getDeliveryFee(), discountAmount);
         order.setDiscountAmount(order.getTotalAmount() -totalAmount);
@@ -456,16 +468,23 @@ public class OrderService {
         CorporateOrder corporateOrder = CorporateOrderRequestDTO.toEntity(dto);
         if (HelperUtils.isNull(corporateOrder)) throw new OrderNotFoundException();
 
+        corporateOrder.setStatus("PENDING");
+        corporateOrder.setOrderDate(new Date());
         corporateOrder.setIsActive(true);
         corporateOrder.setCreatedDate(new Date());
-        corporateOrderRepository.save(corporateOrder);
+
+        Restaurant restaurant = restaurantRepository.getById(dto.getRestaurantId());
+        if (HelperUtils.isNull(restaurant)) throw new RestaurantNotFoundException();
+        corporateOrder.setRestaurant(restaurant);
 
         List<OrderItem> orderItems = corporateOrder.getItems();
         if (HelperUtils.isNotNull(orderItems)) {
             orderItems.forEach(item -> item.setCorporateOrder(corporateOrder));
-            orderItemRepository.saveAll(orderItems);
         }
 
+
+        corporateOrderRepository.save(corporateOrder);
+        orderItemRepository.saveAll(orderItems);
         return CorporateOrderResponseDTO.toResponse(corporateOrder);
     }
 
@@ -503,14 +522,45 @@ public class OrderService {
         return OrderResponseDTO.toResponse(orders);
     }
 
-    public String dailySummary(Date date) {
-        List<Order> orders = orderRepository.OrdersByDate(date);
+    public String dailySummary(String dateStr) {
+        Date date;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            date = sdf.parse(dateStr);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format, expected yyyy-MM-dd (e.g. 2026-06-29)");
+        }
+
+        Date nextDay = Date.from(
+                date.toInstant().plus(1, ChronoUnit.DAYS)
+        );
+
+        List<Order> orders = orderRepository.OrdersByDate(date, nextDay);
 
         double fees = orders.stream()
                 .mapToDouble(Order::getDeliveryFee)
                 .sum();
 
-        return "Total Orders: " + orders.size()
-                + ", Total Fees: " + fees;
+        return "Daily Summary for: " + dateStr
+                + " | Total Orders: " + orders.size()
+                + " | Total Delivery Fees: " + HelperUtils.formatCurrency(fees, "OMR");
+    }
+
+    public String getCancellationRate(String from, String to) {
+        Date fromDate = HelperUtils.parseDate(from);
+        Date toDate   = HelperUtils.parseDate(to);
+
+        List<Order> orders = orderRepository.findCompletedAndCancelledOrders(fromDate, toDate);
+
+        long completed  = orders.stream().filter(o -> o.getStatus() == OrderStatus.DELIVERED).count();
+        long cancelled  = orders.stream().filter(o -> o.getStatus() == OrderStatus.CANCELLED).count();
+        double rate     = orders.isEmpty() ? 0.0 : (cancelled * 100.0) / orders.size();
+
+        return "Cancellation Rate Report\n"
+                + "Period: " + from + " to " + to + "\n"
+                + "Total Orders: " + orders.size() + "\n"
+                + "Completed Orders: " + completed + "\n"
+                + "Cancelled Orders: " + cancelled + "\n"
+                + "Cancellation Rate: " + String.format("%.2f", rate) + "%";
     }
 }

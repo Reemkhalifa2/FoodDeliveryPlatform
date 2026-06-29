@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+
 @Repository
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
@@ -24,10 +25,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findByRestaurantId(@Param("restaurantId") Integer restaurantId);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId  AND  o.createdDate BETWEEN :start AND :end")
-    List<Order>findByOrderDateBetween(@Param("restaurantId") Integer restaurantId , @Param("start") Date start, @Param("end") Date end);
+    List<Order> findByOrderDateBetween(@Param("restaurantId") Integer restaurantId, @Param("start") Date start, @Param("end") Date end);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.delivery.id = :driverId AND o.status = :status")
-    List<Order>findByDeliveryDriverIdAndStatus(@Param("driverId") Integer driverId, @Param("status") String status);
+    List<Order> findByDeliveryDriverIdAndStatus(@Param("driverId") Integer driverId, @Param("status") String status);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.isActive = true AND o.restaurant.id = :restaurantId AND o.status = 'COMPLETED'")
     Integer countCompletedOrders(@Param("restaurantId") Integer restaurantId);
@@ -38,8 +39,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.isActive = true AND o.status ='DELIVERED' AND o.restaurant.id = :id ")
     Double sumDeliveredOrders(@Param("id") Integer id);
 
-    @Query("SELECT  o FROM Order o WHERE o.isActive = true AND o.createdDate= :date ")
-    List<Order> OrdersByDate(@Param("date") Date date);
+    @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.createdDate >= :from AND o.createdDate < :to")
+    List<Order> OrdersByDate(@Param("from") Date from, @Param("to") Date to);
 
     @Query("SELECT o FROM Order o WHERE o.isActive = true AND o.id=:id")
     Order getById(@Param("id") Integer id);
@@ -59,6 +60,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             @Param("toDate") Date toDate,
             Pageable pageable
     );
+
     @Query("""
             SELECT o
             FROM Order o
@@ -73,12 +75,30 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             Pageable pageable
     );
 
+    @Query("""
+    SELECT o FROM Order o
+    WHERE o.isActive = true
+    AND o.restaurant.id = :restaurantId
+    AND o.status = 'DELIVERED'
+    AND o.createdDate >= :from
+    AND o.createdDate < :to
+""")
+    List<Order> findByFilters(
+            @Param("restaurantId") Integer restaurantId,
+            @Param("from") Date from,
+            @Param("to") Date to
+    );
 
-
-
-
-
-
-
+    @Query("""
+    SELECT o FROM Order o
+    WHERE o.isActive = true
+    AND o.createdDate >= :from
+    AND o.createdDate < :to
+    AND o.status IN ('DELIVERED', 'CANCELLED')
+""")
+    List<Order> findCompletedAndCancelledOrders(
+            @Param("from") Date from,
+            @Param("to") Date to
+    );
 
 }
