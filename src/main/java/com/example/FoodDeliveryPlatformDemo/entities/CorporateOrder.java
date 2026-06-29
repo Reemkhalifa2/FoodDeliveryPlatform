@@ -22,6 +22,6 @@ public class CorporateOrder extends BaseEntity {
 
     @ManyToOne
     private Restaurant restaurant;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 }
