@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("reports")
+@RequestMapping("/api/reports")
 public class ReportingController {
 
     @Autowired
@@ -87,7 +87,6 @@ public class ReportingController {
     ) {
         return ResponseEntity.ok(orderService.getCancellationRate(from, to));
     }
-
 
 
 
