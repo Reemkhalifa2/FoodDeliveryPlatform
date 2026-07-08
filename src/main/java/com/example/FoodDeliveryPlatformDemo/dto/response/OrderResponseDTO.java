@@ -11,6 +11,8 @@ import java.util.List;
 
 @Data
 public class OrderResponseDTO {
+    private Integer id;
+
     private OrderStatus status;
     private Double deliveryFee;
     private Double subtotal;
@@ -19,7 +21,7 @@ public class OrderResponseDTO {
     private List<OrderItemSummaryDTO> orderItems;
     public static OrderResponseDTO toResponse(Order order) {
         OrderResponseDTO dto = new OrderResponseDTO();
-
+        dto.setId(order.getId());
         dto.setStatus(order.getStatus());
         dto.setDeliveryFee(order.getDeliveryFee());
         dto.setSubtotal(order.getSubtotal());

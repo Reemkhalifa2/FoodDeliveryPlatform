@@ -31,7 +31,7 @@ public class ComboMealRequestDTO {
         comboMeal.setDescription(dto.getDescription());
         comboMeal.setTotalPrice(dto.getTotalPrice());
         comboMeal.setUpdatedDate(new Date());
-
+        comboMeal.setIsAvailable(true);
         return comboMeal;
     }
 

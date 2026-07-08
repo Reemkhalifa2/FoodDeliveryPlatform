@@ -89,7 +89,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getAll());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDTO> getRestaurantById(@PathVariable Integer id){
         return ResponseEntity.ok(restaurantService.getById(id));
     }

@@ -8,15 +8,18 @@ import java.util.List;
 
 @Data
 public class MenuItemResponseDTO {
+    private Integer id;
     private String name;
     private String description;
     private Double price;
+    private Boolean isAvailable;
     private Boolean isVegetarian;
     private Double calories;
 
     public static MenuItemResponseDTO toResponse(MenuItem menuItem) {
         MenuItemResponseDTO dto = new MenuItemResponseDTO();
-
+        dto.setId(menuItem.getId());
+        dto.setIsAvailable(menuItem.getIsAvailable());
         dto.setName(menuItem.getName());
         dto.setDescription(menuItem.getDescription());
         dto.setPrice(menuItem.getPrice());

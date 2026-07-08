@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class RestaurantResponseDTO {
+    private Integer id;
     private String name;
     private String description;
     private String cuisineType;
@@ -20,11 +21,12 @@ public class RestaurantResponseDTO {
     private Date closingTime;
     private Integer minOrderAmount;
     private Double deliveryFee;
+    private Boolean acceptingOrders;
     private List<MenuItemSummaryDTO> menuItems;
 
     public static RestaurantResponseDTO toResponse(Restaurant restaurant) {
         RestaurantResponseDTO dto = new RestaurantResponseDTO();
-
+        dto.setId(restaurant.getId());
         dto.setName(restaurant.getName());
         dto.setDescription(restaurant.getDescription());
         dto.setCuisineType(restaurant.getCuisineType());
@@ -32,6 +34,7 @@ public class RestaurantResponseDTO {
         dto.setClosingTime(restaurant.getClosingTime());
         dto.setMinOrderAmount(restaurant.getMinOrderAmount());
         dto.setDeliveryFee(restaurant.getDeliveryFee());
+        dto.setAcceptingOrders(restaurant.getAcceptingOrders());
         if(HelperUtils.isNotNull(restaurant.getMenuItems())){
             dto.setMenuItems(MenuItemSummaryDTO.toSummary(restaurant.getMenuItems()));
 

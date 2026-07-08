@@ -38,6 +38,7 @@ public class MenuItemRequestDTO {
         menuItem.setIsVegetarian(dto.getIsVegetarian());
         menuItem.setCalories(dto.getCalories());
         menuItem.setUpdatedDate(new Date());
+        menuItem.setIsAvailable(true);
         return menuItem;
     }
 

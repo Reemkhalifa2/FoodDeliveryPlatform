@@ -167,7 +167,7 @@ public class OrderService {
         if (HelperUtils.isNull(order)) {
             throw new OrderNotFoundException();
         }
-        if(order.getStatus() != OrderStatus.CREATED || order.getStatus() != OrderStatus.PENDING){
+        if(order.getStatus() != OrderStatus.CREATED && order.getStatus() != OrderStatus.PENDING){
             throw new InvalidRequestException("You cant add items.");
         }
 
