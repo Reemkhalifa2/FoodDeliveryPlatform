@@ -3,6 +3,8 @@ package com.example.FoodDeliveryPlatformDemo.repositories;
 import com.example.FoodDeliveryPlatformDemo.entities.ComboMeal;
 import com.example.FoodDeliveryPlatformDemo.entities.MenuItem;
 import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +15,16 @@ import java.util.List;
 @Repository
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Integer> {
-
+    @Query("""
+    SELECT r
+    FROM Restaurant r
+    WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      AND r.isActive = true
+""")
+    Page<Restaurant> search(
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
     @Query("SELECT r FROM Restaurant r where r.isActive = true AND r.cuisineType =:cuisineType")
     List<Restaurant> findByCuisineTypeIgnoreCase(String cuisineType);
 

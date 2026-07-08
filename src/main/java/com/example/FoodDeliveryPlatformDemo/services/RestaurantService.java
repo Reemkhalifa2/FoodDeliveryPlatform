@@ -12,6 +12,9 @@ import com.example.FoodDeliveryPlatformDemo.repositories.*;
 import com.example.FoodDeliveryPlatformDemo.utilities.HelperUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
 
@@ -341,6 +344,19 @@ public class RestaurantService {
                 + "Total Revenue: " + HelperUtils.formatCurrency(totalRevenue, "OMR") + "\n"
                 + "Total Delivery Fees: " + HelperUtils.formatCurrency(totalFees, "OMR") + "\n"
                 + "Net Revenue: " + HelperUtils.formatCurrency(totalRevenue - totalFees, "OMR");
+    }
+
+    public Page<RestaurantResponseDTO> searchRestaurants(
+            String keyword,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Restaurant> restaurants =
+                restaurantRepository.search(keyword, pageable);
+
+        return restaurants.map(RestaurantResponseDTO::toResponse);
     }
 
 

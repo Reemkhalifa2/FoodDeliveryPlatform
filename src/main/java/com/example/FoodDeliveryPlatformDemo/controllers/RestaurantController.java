@@ -12,6 +12,7 @@ import com.example.FoodDeliveryPlatformDemo.entities.Restaurant;
 import com.example.FoodDeliveryPlatformDemo.services.RestaurantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/restaurants")
+@CrossOrigin(
+        origins = {
+                "http://127.0.0.1:5500",
+                "http://localhost:8080"
+        }
+)
 public class RestaurantController {
     @Autowired
     public RestaurantController(RestaurantService restaurantService) {
@@ -44,6 +51,17 @@ public class RestaurantController {
         );
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<RestaurantResponseDTO>> searchRestaurants(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                restaurantService.searchRestaurants(keyword, page, size)
+        );
+    }
+
     @GetMapping("{id}/search")
     public ResponseEntity<List<MenuItemResponseDTO>> searchMenuItems(
             @PathVariable Integer id,
@@ -55,6 +73,7 @@ public class RestaurantController {
                 restaurantService.searchMenuItems(id, name, minCalories, maxCalories)
         );
     }
+
     @PostMapping("restaurantOwner")
     public ResponseEntity<RestaurantOwnerResponseDTO> addRestaurantOwner(@Valid @RequestBody RestaurantOwnerRequestDTO restaurantOwnerRequestDTO){
         return ResponseEntity.ok(restaurantService.addRestaurantOwner(restaurantOwnerRequestDTO));
