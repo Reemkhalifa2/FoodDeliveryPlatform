@@ -42,7 +42,7 @@ public class ReportingController {
     DeliveryService deliveryService;
 
     @GetMapping("/revenue/restaurant/{restaurantId}")
-    public ResponseEntity<String> getRestaurantRevenue(
+    public ResponseEntity<Double> getRestaurantRevenue(
             @PathVariable Integer restaurantId,
             @RequestParam String date
     ) {
@@ -86,7 +86,7 @@ public class ReportingController {
         return ResponseEntity.ok(deliveryService.getDriverEarnings(driverId, from, to));
     }
     @GetMapping("/orders/cancellation-rate")
-    public ResponseEntity<String> getCancellationRate(
+    public ResponseEntity<Double> getCancellationRate(
             @RequestParam String from,
             @RequestParam String to
     ) {

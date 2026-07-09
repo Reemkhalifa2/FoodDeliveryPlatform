@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.services;
 
+import com.example.FoodDeliveryPlatformDemo.dto.OrderEtaResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.OrderHistoryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
@@ -546,7 +547,7 @@ public class OrderService {
                 + " | Total Delivery Fees: " + HelperUtils.formatCurrency(fees, "OMR");
     }
 
-    public String getCancellationRate(String from, String to) {
+    public Double getCancellationRate(String from, String to) {
         Date fromDate = HelperUtils.parseDate(from);
         Date toDate   = HelperUtils.parseDate(to);
 
@@ -556,11 +557,36 @@ public class OrderService {
         long cancelled  = orders.stream().filter(o -> o.getStatus() == OrderStatus.CANCELLED).count();
         double rate     = orders.isEmpty() ? 0.0 : (cancelled * 100.0) / orders.size();
 
-        return "Cancellation Rate Report\n"
-                + "Period: " + from + " to " + to + "\n"
-                + "Total Orders: " + orders.size() + "\n"
-                + "Completed Orders: " + completed + "\n"
-                + "Cancelled Orders: " + cancelled + "\n"
-                + "Cancellation Rate: " + String.format("%.2f", rate) + "%";
+        return rate;
+    }
+
+    @Autowired
+    DeliveryRepository deliveryRepository;
+    public Integer getEstimatedDeliveryTime(Integer orderId) {
+
+        Delivery delivery = deliveryRepository.getByOrderID(orderId);
+
+        DeliveryDriver driver = delivery.getDeliveryDriver();
+
+        double restaurantLat = 23.5880;
+        double restaurantLng = 58.3829;
+
+        double driverLat = driver.getCurrentLat();
+        double driverLng = driver.getCurrentLng();
+
+        double distance = HelperUtils.calculateDistance(
+                restaurantLat,
+                restaurantLng,
+                driverLat,
+                driverLng
+        );
+
+        double averageSpeedKmPerHour = 40.0;
+
+        double etaHours = distance / averageSpeedKmPerHour;
+
+        int etaMinutes = (int) Math.ceil(etaHours * 60);
+
+        return Math.max(0, etaMinutes);
     }
 }

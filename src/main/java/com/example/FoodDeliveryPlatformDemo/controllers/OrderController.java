@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.controllers;
 
+import com.example.FoodDeliveryPlatformDemo.dto.OrderEtaResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.dto.response.OrderHistoryResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.entities.OrderStatusHistory;
 import com.example.FoodDeliveryPlatformDemo.entities.Order;
@@ -114,19 +115,28 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    @GetMapping("/{id}/eta")
+    public ResponseEntity<Integer> getOrderEta(
+            @PathVariable Integer id
+    ){
 
+        return ResponseEntity.ok(
+                orderService.getEstimatedDeliveryTime(id)
+        );
 
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

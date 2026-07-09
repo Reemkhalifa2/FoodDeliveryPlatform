@@ -23,6 +23,8 @@ public class DeliveryDriverRequestDTO extends PersonDTO{
             message = "Vehicle plate must contain both letters and numbers"
     )
     private String vehiclePlate;
+    private Double currentLat; //Current latitude location of driver
+    private Double currentLng; //Current longitude location of driver
 
     public static DeliveryDriver toEntity(DeliveryDriverRequestDTO dto) {
         DeliveryDriver deliveryDriver = new DeliveryDriver();
@@ -37,6 +39,9 @@ public class DeliveryDriverRequestDTO extends PersonDTO{
         deliveryDriver.setPasswordHash(dto.getPassword());
         deliveryDriver.setVehiclePlate(dto.getVehiclePlate());
         deliveryDriver.setVehicleType(dto.getVehicleType());
+        deliveryDriver.setCurrentLat(dto.getCurrentLat());
+        deliveryDriver.setCurrentLng(dto.getCurrentLng());
+
         return deliveryDriver;
     }
 

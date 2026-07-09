@@ -9,9 +9,11 @@ import java.util.List;
 
 @Data
 public class DeliveryResponseDTO {
+    private Integer id;
     private String status;
     private Date pickedUpAt;
     private Date deliveredAt;
+    private DeliveryDriverResponseDTO responseDTO;
 
     public static DeliveryResponseDTO toResponse(Delivery delivery) {
         if (delivery == null) {
@@ -19,6 +21,8 @@ public class DeliveryResponseDTO {
         }
 
         DeliveryResponseDTO dto = new DeliveryResponseDTO();
+        dto.setResponseDTO(DeliveryDriverResponseDTO.toResponse(delivery.getDeliveryDriver()));
+        dto.setId(delivery.getId());
         dto.setStatus(delivery.getStatus());
         dto.setPickedUpAt(delivery.getPickedUpAt());
         dto.setDeliveredAt(delivery.getDeliveredAt());

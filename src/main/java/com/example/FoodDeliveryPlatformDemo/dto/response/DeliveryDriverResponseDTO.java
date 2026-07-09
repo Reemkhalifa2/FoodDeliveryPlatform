@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class DeliveryDriverResponseDTO {
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
@@ -18,7 +19,8 @@ public class DeliveryDriverResponseDTO {
     private String driverCode;
     private String vehicleType;
     private String vehiclePlate;
-
+    private Double currentLat; //Current latitude location of driver
+    private Double currentLng;
     public static DeliveryDriverResponseDTO toResponse(DeliveryDriver deliveryDriver) {
         DeliveryDriverResponseDTO dto = new DeliveryDriverResponseDTO();
         dto.setFirstName(deliveryDriver.getFirstName());
@@ -28,7 +30,9 @@ public class DeliveryDriverResponseDTO {
         dto.setDriverCode(deliveryDriver.getDriverCode());
         dto.setVehiclePlate(deliveryDriver.getVehiclePlate());
         dto.setVehicleType(deliveryDriver.getVehicleType());
-
+        dto.setId(deliveryDriver.getId());
+        dto.setCurrentLat(deliveryDriver.getCurrentLat());
+        dto.setCurrentLng(deliveryDriver.getCurrentLng());
         return dto;
     }
 

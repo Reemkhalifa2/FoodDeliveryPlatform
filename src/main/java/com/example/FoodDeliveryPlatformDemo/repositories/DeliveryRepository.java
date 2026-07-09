@@ -16,6 +16,9 @@ public interface DeliveryRepository extends JpaRepository<Delivery , Integer> {
     @Query("SELECT d FROM Delivery d WHERE d.id = :id AND d.isActive = true")
     Delivery getByID(@Param("id") Integer id);
 
+    @Query("SELECT d FROM Delivery d WHERE d.order.id = :orderId AND d.isActive = true")
+    Delivery getByOrderID(@Param("orderId") Integer orderId);
+
     @Query("SELECT d FROM Delivery d WHERE d.deliveryDriver.id = :driverId AND d.isActive = true")
     List<Delivery> getActiveDelivery(@Param("driverId") Integer driverId);
 
@@ -49,4 +52,5 @@ public interface DeliveryRepository extends JpaRepository<Delivery , Integer> {
             @Param("from") Date from,
             @Param("to") Date to
     );
+
 }

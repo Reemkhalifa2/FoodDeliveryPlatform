@@ -317,6 +317,11 @@ public class DeliveryService {
     }
 
 
+    public DeliveryResponseDTO getOrderDelivery(Integer orderId){
+        return DeliveryResponseDTO.toResponse(deliveryRepository.getByOrderID(orderId));
+    }
+
+
 
 
 }

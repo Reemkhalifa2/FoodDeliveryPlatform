@@ -258,7 +258,7 @@ public class RestaurantService {
         return MenuItemResponseDTO.toResponse(menuItems);
     }
 
-    public String getRestaurantRevenue(Integer restaurantId, String dateStr) {
+    public Double getRestaurantRevenue(Integer restaurantId, String dateStr) {
         Restaurant restaurant = restaurantRepository.getById(restaurantId);
 
         if (HelperUtils.isNull(restaurant)) {
@@ -280,12 +280,12 @@ public class RestaurantService {
         List<Order> orders = orderRepository.findByOrderDateBetween(restaurantId, date, nextDay);
         Double revenue = 0.0;
         for (Order order : orders) {
-            if (order.getStatus() == OrderStatus.DELIVERED) {
+
                 revenue += order.getTotalAmount();
-            }
+
         }
 
-        return "Total revenue for restaurant: " + restaurantId + " on date: " + dateStr + ": " + HelperUtils.formatCurrency(revenue, "OMR");
+        return revenue;
     }
 
     public Integer totalLifetimeOrders(Integer restaurantId){

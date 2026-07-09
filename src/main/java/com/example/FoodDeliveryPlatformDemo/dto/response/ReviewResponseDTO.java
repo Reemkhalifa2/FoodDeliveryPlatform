@@ -10,6 +10,8 @@ import java.util.List;
 @Data
 public class ReviewResponseDTO {
 
+    private Integer id;
+
     private Integer rating;
     private String comment;
 
@@ -18,6 +20,7 @@ public class ReviewResponseDTO {
         ReviewResponseDTO dto = new ReviewResponseDTO();
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());
+        dto.setId(review.getId());
         return dto;
     }
 

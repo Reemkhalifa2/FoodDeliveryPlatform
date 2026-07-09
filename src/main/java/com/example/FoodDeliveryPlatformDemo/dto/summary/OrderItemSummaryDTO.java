@@ -9,12 +9,14 @@ import java.util.List;
 
 @Data
 public class OrderItemSummaryDTO {
+    private Integer id;
     private Integer quantity;
     private Double totalPrice;
 
     public static OrderItemSummaryDTO toSummary(OrderItem orderItem) {
         OrderItemSummaryDTO dto = new OrderItemSummaryDTO();
 
+        dto.setId(orderItem.getId());
         dto.setQuantity(orderItem.getQuantity());
         dto.setTotalPrice(orderItem.getTotalPrice());
 

@@ -76,5 +76,10 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.getDriverPerformance(driverId));
     }
 
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<DeliveryResponseDTO> getByOrderId(@PathVariable Integer orderId){
+        return ResponseEntity.ok(deliveryService.getOrderDelivery(orderId));
+    }
+
 
 }

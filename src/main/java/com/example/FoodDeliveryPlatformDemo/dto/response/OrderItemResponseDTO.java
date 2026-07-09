@@ -9,6 +9,9 @@ import java.util.List;
 
 @Data
 public class OrderItemResponseDTO {
+    private Integer id;
+    private Integer menuItemId;
+
     private Integer quantity;
     private Double unitPrice;
     private Double totalPrice;
@@ -17,7 +20,8 @@ public class OrderItemResponseDTO {
 
     public static OrderItemResponseDTO toResponse(OrderItem orderItem) {
         OrderItemResponseDTO dto = new OrderItemResponseDTO();
-
+        dto.setId(orderItem.getId());
+        dto.setMenuItemId(orderItem.getMenuItem().getId());
         dto.setQuantity(orderItem.getQuantity());
         dto.setUnitPrice(orderItem.getUnitPrice());
         dto.setTotalPrice(orderItem.getTotalPrice());

@@ -12,11 +12,13 @@ import java.util.List;
 
 @Data
 public class OrderHistoryResponseDTO {
+    private Integer id;
     private OrderStatus status;
     private Date date;
     public static OrderHistoryResponseDTO toResponse(OrderStatusHistory orderStatusHistory) {
         OrderHistoryResponseDTO dto = new OrderHistoryResponseDTO();
 
+        dto.setId(orderStatusHistory.getId());
         dto.setDate(orderStatusHistory.getCreatedDate());
         dto.setStatus(orderStatusHistory.getStatus());
 

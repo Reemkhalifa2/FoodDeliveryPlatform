@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class MenuItemSummaryDTO {
+    private Integer id;
     private String name;
     private Double price;
 
@@ -20,6 +21,7 @@ public class MenuItemSummaryDTO {
         dto.setName(menuItem.getName());
         dto.setPrice(menuItem.getPrice());
 
+        dto.setId(menuItem.getId());
         return dto;
     }
 

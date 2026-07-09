@@ -1,5 +1,6 @@
 package com.example.FoodDeliveryPlatformDemo.entities;
 
+import com.example.FoodDeliveryPlatformDemo.dto.OrderEtaResponseDTO;
 import com.example.FoodDeliveryPlatformDemo.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,4 +40,5 @@ public class Order extends BaseEntity{
     private Payment payment;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderStatusHistory> statusHistory = new ArrayList<>();
+
 }
