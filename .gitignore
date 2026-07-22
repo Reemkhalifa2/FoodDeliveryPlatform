@@ -3,7 +3,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+C:\Users\reem1\OneDrive\Desktop\FoodDeliveryPlatform\src\main\resources\application.properties
 ### STS ###
 .apt_generated
 .classpath
